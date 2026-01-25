@@ -1,0 +1,146 @@
+[
+  {
+    "id": "Q1",
+    "level": 1,
+    "type": "multiple_choice",
+    "prompt": "Which statement assigns the value 10 to the variable x?",
+    "options": [
+      "10 = x",
+      "x == 10",
+      "x ← 10",
+      "x + 10"
+    ],
+    "answer": "x ← 10",
+    "misconception": "assignment_vs_comparison",
+    "hint": "Assignment puts a value into a variable. Comparison checks equality.",
+    "code": "x ← 10"
+  },
+  {
+    "id": "Q2",
+    "level": 1,
+    "type": "true_false",
+    "prompt": "A variable can store more than one value at the same time.",
+    "answer": false,
+    "misconception": "variable_storage",
+    "hint": "Think of a variable as a box that holds ONE value."
+  },
+  {
+    "id": "Q3",
+    "level": 2,
+    "type": "multiple_choice",
+    "prompt": "执行下面的赋值语句后，x 的最终值是多少？",
+    "code": "x ← 3\nx ← 8",
+    "options": ["3", "8", "11", "x"],
+    "answer": "8",
+    "misconception": "reassignment_confusion",
+    "hint": "A new assignment replaces the old value.",
+    "visual": {
+      "before": { "x": 3 },
+      "after": { "x": 8 }
+    }
+  },
+  {
+    "id": "Q4",
+    "level": 2,
+    "type": "short_answer",
+    "prompt": "执行下面的赋值语句后，score 的值是多少？",
+    "code": "score ← 5\nscore ← score + 2",
+    "answer": "7",
+    "misconception": "self_reference_confusion",
+    "hint": "Use the current value of the variable before updating it.",
+    "visual": {
+      "before": { "score": 5 },
+      "after": { "score": 7 }
+    }
+  },
+  {
+    "id": "Q5",
+    "level": 3,
+    "type": "multiple_choice",
+    "prompt": "执行下面的程序后，y 的值是多少？",
+    "code": "x ← 4\ny ← x + 1\nx ← 10",
+    "options": ["5", "11", "10", "x + 1"],
+    "answer": "5",
+    "misconception": "thinking_variables_are_linked",
+    "hint": "Variables do not automatically update when other variables change.",
+    "visual": {
+      "before": { "x": 4, "y": undefined },
+      "after": { "x": 10, "y": 5 }
+    }
+  },
+  {
+    "id": "Q6",
+    "level": 2,
+    "type": "short_answer",
+    "prompt": "执行下面的赋值语句后，total 的值是多少？",
+    "code": "total ← 6 + 2",
+    "answer": "8",
+    "misconception": "expression_not_evaluated",
+    "hint": "Evaluate the expression before storing it.",
+    "visual": {
+      "before": { "total": undefined },
+      "after": { "total": 8 }
+    }
+  },
+  {
+    "id": "Q7",
+    "level": 3,
+    "type": "short_answer",
+    "prompt": "执行下面的程序后，y 的值是多少？",
+    "code": "x ← 5\ny ← x\nx ← 9",
+    "answer": "5",
+    "misconception": "copy_vs_reference",
+    "hint": "Assignment copies the value, not a connection.",
+    "visual": {
+      "before": { "x": 5, "y": undefined },
+      "after": { "x": 9, "y": 5 }
+    }
+  },
+  {
+    "id": "Q8",
+    "level": 1,
+    "type": "multiple_choice",
+    "prompt": "Which line shows an error in understanding variables?",
+    "code": "x ← 3\ny ← x + 2\nx == 5\ntotal ← total + 1",
+    "options": [
+      "x ← 3",
+      "y ← x + 2",
+      "x == 5",
+      "total ← total + 1"
+    ],
+    "answer": "x == 5",
+    "misconception": "comparison_as_assignment",
+    "hint": "== does not store a value."
+  },
+  {
+    "id": "Q9",
+    "level": 2,
+    "type": "multiple_choice",
+    "prompt": "A game uses a variable lives. lives ← 3. The player loses one life. Which statement correctly updates lives?",
+    "code": "lives ← 3",
+    "options": [
+      "lives ← 1",
+      "lives == lives - 1",
+      "lives ← lives - 1",
+      "lives - 1"
+    ],
+    "answer": "lives ← lives - 1",
+    "misconception": "updating_variable",
+    "hint": "You must assign the new value back to the variable."
+  },
+  {
+    "id": "Q10",
+    "level": 2,
+    "type": "short_answer",
+    "prompt": "A box labeled x contains 2. After x ← x * 3, what value is in the box?",
+    "code": "x ← 2\nx ← x * 3",
+    "answer": "6",
+    "misconception": "expression_update",
+    "hint": "Use the current value in the box to calculate the new one.",
+    "visual": {
+      "before": { "x": 2 },
+      "after": { "x": 6 }
+    }
+  }
+]
+
