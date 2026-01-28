@@ -26,25 +26,13 @@
   height: 100%;
 }
 
-.drag-viz__header {
-  margin-bottom: 4px;
-}
-
-.drag-viz__title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #e9eefc;
-  margin-bottom: 4px;
-}
-
-.drag-viz__subtitle {
-  font-size: 12px;
-  color: rgba(184, 195, 230, 0.85);
-}
+.drag-viz__header { margin-bottom: 8px; }
+.drag-viz__title { font-size: 18px; font-weight: 900; color: #e9eefc; margin-bottom: 4px; }
+.drag-viz__subtitle { font-size: 13px; color: rgba(184, 195, 230, 0.85); }
 
 .drag-viz__layout {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr 1.1fr;
+  grid-template-columns: 0.95fr 1.45fr;
   gap: 16px;
   align-items: flex-start;
 }
@@ -70,10 +58,174 @@
   margin-bottom: 8px;
 }
 
+.drag-viz__section-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.drag-viz__section-title-row .drag-viz__section-title{
+  margin-bottom: 0;
+}
+
+.drag-viz__section-actions{
+  display:flex;
+  gap: 8px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.drag-viz__btn--xs{
+  padding: 5px 10px;
+  font-size: 10px;
+  width: auto;
+  white-space: nowrap;
+}
+
+/* 工具区：输入/按钮/数值池用统一间距，避免视觉“叠在一起” */
+.drag-viz__column--tools .drag-viz__card{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drag-viz__column--tools .drag-viz__input-row{
+  margin-bottom: 0;
+}
+
+.drag-viz__column--tools .drag-viz__input-hint{
+  margin-bottom: 0;
+}
+
+.drag-viz__mode-row{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+}
+
+.drag-viz__card{
+  background: rgba(10, 16, 30, 0.92);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+.drag-viz__type-hints{
+  margin-top: 10px;
+}
+
+.drag-viz__type-hints-title{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(233,238,252,0.96);
+  margin-bottom: 8px;
+}
+
+.drag-viz__type-hints-list{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drag-viz__type-hints-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drag-viz__type-chip{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  color: rgba(233,238,252,0.95);
+  flex: 0 0 auto;
+}
+
+.drag-viz__type-chip--int{ border-color: rgba(106,168,255,0.45); color: #6ab0ff; }
+.drag-viz__type-chip--double{ border-color: rgba(61,220,151,0.45); color: #3ddc97; }
+.drag-viz__type-chip--string{ border-color: rgba(255,150,200,0.45); color: #ff96c8; }
+.drag-viz__type-chip--boolean{ border-color: rgba(255,204,102,0.45); color: #ffcc66; }
+
+.drag-viz__type-example{
+  font-size: 12px;
+  color: rgba(233,238,252,0.9);
+  line-height: 1.4;
+}
+
+.drag-viz__type-hints-note{
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,204,102,0.35);
+  background: rgba(255,204,102,0.10);
+  color: rgba(255,244,214,0.96);
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.drag-viz__stack{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
 .drag-viz__pool {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.drag-viz__subrow{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 2px;
+}
+.drag-viz__subrow-title{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(233,238,252,0.92);
+}
+
+.drag-viz__var-tokens{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.drag-viz__token--var{
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.18);
+  min-width: 44px;
+}
+
+.drag-viz__token--disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.drag-viz__box-meta{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+
+.drag-viz__heat{
+  display:flex;
+  align-items:center;
+  gap: 6px;
 }
 
 .drag-viz__input-row {
@@ -82,14 +234,19 @@
   margin-bottom: 6px;
 }
 
+.drag-viz__input-row--stack{
+  margin-bottom: 8px;
+}
+
 .drag-viz__input {
   flex: 1;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(10, 16, 30, 0.9);
   color: #e9eefc;
-  font-size: 12px;
-  padding: 6px 8px;
+  font-size: 14px;
+  padding: 10px 12px;
+  min-height: 42px;
 }
 
 .drag-viz__input-hint {
@@ -140,6 +297,8 @@
   padding: 8px 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
   transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .drag-viz__box--target {
@@ -174,6 +333,149 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.drag-viz__box-detail{
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.10);
+  display:flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.drag-viz__box-detail-row{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.drag-viz__box-detail-label{
+  color: rgba(184,195,230,0.9);
+}
+.drag-viz__box-detail-value{
+  color: rgba(233,238,252,0.96);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.drag-viz__expand-btn{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.04);
+  color: rgba(233,238,252,0.95);
+  font-size: 10px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.drag-viz__expand-btn:hover{
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-0.5px);
+}
+
+.drag-viz__fx{
+  position: absolute;
+  inset: -6px;
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.drag-viz__fx--assign{
+  animation: dragAssignGlow 700ms ease-out;
+  background: radial-gradient(120px 60px at 50% 40%, rgba(61,220,151,0.20), transparent 65%);
+}
+
+.drag-viz__fx--copyfrom{
+  animation: dragCopyFromGlow 700ms ease-out;
+  background: radial-gradient(120px 60px at 50% 40%, rgba(106,168,255,0.18), transparent 65%);
+}
+
+.drag-viz__drop{
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.drag-viz__drop-value{
+  display:inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(61,220,151,0.45);
+  background: rgba(61,220,151,0.12);
+  color: rgba(233,252,240,0.96);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 900;
+  animation: dragDropIn 650ms ease-out;
+}
+
+.drag-viz__label{
+  position:absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(106,168,255,0.30);
+  background: rgba(106,168,255,0.10);
+  color: rgba(233,238,252,0.92);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+  animation: dragLabelPop 700ms ease-out;
+  pointer-events: none;
+}
+
+.drag-viz__fly-layer{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.drag-viz__fly{
+  position:absolute;
+  transform: translate(0,0);
+  transition: transform 650ms cubic-bezier(.2,.8,.2,1);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(106,168,255,0.35);
+  background: rgba(106,168,255,0.10);
+  color: rgba(233,238,252,0.90);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 900;
+  filter: blur(0px);
+  opacity: 0.92;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+@keyframes dragAssignGlow{
+  0%{ opacity: 0; transform: scale(0.98); }
+  20%{ opacity: 1; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(1.02); }
+}
+
+@keyframes dragCopyFromGlow{
+  0%{ opacity: 0; transform: scale(0.98); }
+  20%{ opacity: 1; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(1.02); }
+}
+
+@keyframes dragDropIn{
+  0%{ transform: translateY(-10px) scale(0.98); opacity: 0; }
+  35%{ transform: translateY(6px) scale(1.02); opacity: 1; }
+  100%{ transform: translateY(18px) scale(1.0); opacity: 0; }
+}
+
+@keyframes dragLabelPop{
+  0%{ transform: translateX(-50%) translateY(6px); opacity: 0; }
+  25%{ transform: translateX(-50%) translateY(0px); opacity: 1; }
+  100%{ transform: translateX(-50%) translateY(-2px); opacity: 0; }
 }
 
 .drag-viz__box-empty {
@@ -205,6 +507,11 @@
   transition: all 0.2s ease;
 }
 
+.drag-viz__btn--block{
+  width: 100%;
+  text-align: center;
+}
+
 .drag-viz__btn:hover {
   background: rgba(255, 255, 255, 0.08);
   transform: translateY(-1px);
@@ -214,6 +521,11 @@
   border-color: rgba(255, 255, 255, 0.16);
   background: transparent;
   color: rgba(184, 195, 230, 0.95);
+}
+.drag-viz__btn--active{
+  border-color: rgba(106,168,255,0.6);
+  background: rgba(106,168,255,0.16);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
 }
 
 .drag-viz__prompt {
@@ -247,6 +559,251 @@
   border: 1px solid rgba(255, 204, 102, 0.7);
   background: rgba(255, 204, 102, 0.18);
   color: rgba(255, 244, 214, 0.96);
+}
+
+.drag-viz__layout--gold{
+  align-items: stretch;
+}
+
+.drag-viz__column--tools{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drag-viz__column--stage{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drag-viz__stage{
+  background: rgba(10,16,30,0.9);
+  border: 1px dashed rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  position: relative;
+}
+
+.drag-viz__read-zone{
+  margin-top: 2px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(106,168,255,0.35);
+  background: rgba(106,168,255,0.06);
+  color: rgba(233,238,252,0.92);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.drag-viz__ghost{
+  margin-top: 2px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  padding: 10px 12px;
+}
+
+.drag-viz__ghost-header{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.drag-viz__ghost-title{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(233,238,252,0.92);
+}
+
+.drag-viz__ghost-empty{
+  font-size: 12px;
+  color: rgba(184,195,230,0.85);
+  line-height: 1.5;
+}
+
+.drag-viz__ghost-code{
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(233,238,252,0.75);
+  opacity: 0.9;
+}
+
+/* ===== Execution Trace Ribbon ===== */
+.trace-ribbon{
+  position: sticky;
+  bottom: 0;
+  background: rgba(10,16,30,0.92);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 -10px 24px rgba(0,0,0,0.35);
+}
+
+.trace-ribbon__toggle{
+  border-radius: 999px;
+  border: 1px solid rgba(106,168,255,0.35);
+  background: rgba(106,168,255,0.10);
+  color: rgba(233,238,252,0.95);
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.trace-ribbon__toggle:hover{
+  background: rgba(106,168,255,0.16);
+  transform: translateY(-1px);
+}
+
+.trace-ribbon__content{
+  margin-top: 10px;
+}
+.trace-ribbon__empty{
+  font-size: 12px;
+  color: rgba(184,195,230,0.85);
+}
+.trace-ribbon__items{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.trace-ribbon__item{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  color: rgba(233,238,252,0.92);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.trace-ribbon__item:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.07);
+}
+.trace-ribbon__item--active{
+  border-color: rgba(61,220,151,0.45);
+  background: rgba(61,220,151,0.12);
+}
+.trace-ribbon__arrow{
+  margin-left: 8px;
+  color: rgba(184,195,230,0.7);
+}
+
+.drag-viz__history{
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drag-viz__history-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.drag-viz__history-title{
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(233,238,252,0.95);
+}
+
+.drag-viz__history-clear{
+  width: auto;
+  padding: 4px 10px;
+  font-size: 10px;
+}
+
+.drag-viz__history-empty{
+  font-size: 12px;
+  color: rgba(184,195,230,0.85);
+  line-height: 1.5;
+}
+
+.drag-viz__history-list{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+}
+
+.drag-viz__history-item{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: rgba(233,238,252,0.96);
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+}
+
+.drag-viz__drop-hint{
+  font-size: 12px;
+  color: rgba(184,195,230,0.9);
+}
+
+.drag-viz__boxes--stage{
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(255,255,255,0.02);
+}
+
+.drag-viz__box-type{
+  font-size: 10px;
+  color: rgba(184,195,230,0.8);
+}
+
+.drag-viz__column--sim{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drag-viz__sim{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drag-viz__sim-log{
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 120px;
+}
+
+.drag-viz__sim-empty{
+  font-size: 12px;
+  color: rgba(184,195,230,0.85);
+  line-height: 1.5;
+}
+
+.drag-viz__sim-line{
+  font-size: 12px;
+  color: rgba(233,238,252,0.96);
+  line-height: 1.45;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
 }
 
 .box-viz__header {

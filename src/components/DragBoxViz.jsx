@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import './Visualization.css'
 import { useLanguage } from '../contexts/LanguageContext'
 
@@ -32,45 +32,103 @@ const initialPool = [
   makeValue('true'),
 ]
 
-const tasks = [
-  {
-    id: 1,
-    promptKey: 'box_drag_task1',
-    targetVar: 'x',
-    targetValue: 7,
-  },
-  {
-    id: 2,
-    promptKey: 'box_drag_task2',
-    targetVar: 'y',
-    targetValue: 10,
-  },
-]
-
 export default function DragBoxViz() {
   const { t } = useLanguage()
   const [pool, setPool] = useState(initialPool)
   const [inputRaw, setInputRaw] = useState('')
   const [inputError, setInputError] = useState('')
   const [boxes, setBoxes] = useState({
-    x: { name: 'x', type: 'int', value: null },
-    y: { name: 'y', type: 'int', value: null },
+    x: { name: 'x', type: 'int', value: null, lastStep: null, source: null },
+    y: { name: 'y', type: 'int', value: null, lastStep: null, source: null },
   })
-  const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
+  // 历史记录（影子代码）：每次拖拽生成一行“半透明代码”，永远在那里
+  const [ghostCode, setGhostCode] = useState([]) // oldest first
+  // 时间轨迹丝带：保存每一步执行后的快照，点击可回放到当时状态
+  const [trace, setTrace] = useState([]) // oldest first: { label, snapshot }
+  const [traceOpen, setTraceOpen] = useState(false)
+  const [traceSelected, setTraceSelected] = useState(-1)
+  const [stepCounter, setStepCounter] = useState(0)
+  const [mode, setMode] = useState('guided') // 'guided' | 'exam'
   const [dragItem, setDragItem] = useState(null) // { kind: 'value' | 'box', payload: ... }
   const [dragOverBox, setDragOverBox] = useState(null)
-  const [feedback, setFeedback] = useState(null)
 
-  const currentTask = tasks[currentTaskIndex]
+  // 动作层可视化：闪光/高亮/复制提示/飞行影子
+  const stageRef = useRef(null)
+  const boxRefs = useRef({})
+  const [boxFx, setBoxFx] = useState({}) // { [name]: { flash?: 'assign'|'copyFrom', label?: string, drop?: string } }
+  const [flies, setFlies] = useState([]) // [{id,text,x0,y0,x1,y1,go}]
+
+  const cloneBoxes = (b) => JSON.parse(JSON.stringify(b))
+
+  const pushGhost = (line) => {
+    setGhostCode((prev) => [...prev, line].slice(-18))
+  }
+
+  const pushTrace = (label, nextBoxes) => {
+    const snap = cloneBoxes(nextBoxes)
+    setTrace((prev) => [...prev, { label, snapshot: snap }].slice(-24))
+    setTraceSelected((_) => -1)
+  }
 
   const handleDragStartValue = (token) => {
     setDragItem({ kind: 'value', payload: token })
-    setFeedback(null)
+  }
+
+  const handleDragStartVarToken = (name) => {
+    const b = boxes[name]
+    if (!b || b.value === null || b.value === undefined) return
+    setDragItem({ kind: 'box', payload: name })
   }
 
   const handleDragEnd = () => {
     setDragItem(null)
     setDragOverBox(null)
+  }
+
+  const formatValue = (v) => {
+    if (v === null || v === undefined) return ''
+    if (typeof v === 'boolean') return v ? 'true' : 'false'
+    return String(v)
+  }
+
+  const flashBox = (name, payload) => {
+    setBoxFx((prev) => ({ ...prev, [name]: { ...(prev[name] || {}), ...payload } }))
+    window.setTimeout(() => {
+      setBoxFx((prev) => {
+        const next = { ...prev }
+        if (!next[name]) return prev
+        // 只清理本次效果字段
+        next[name] = { ...(next[name] || {}) }
+        delete next[name].flash
+        delete next[name].label
+        delete next[name].drop
+        if (Object.keys(next[name]).length === 0) delete next[name]
+        return next
+      })
+    }, 700)
+  }
+
+  const flyValue = (fromName, toName, text) => {
+    const stageEl = stageRef.current
+    const fromEl = boxRefs.current[fromName]
+    const toEl = boxRefs.current[toName]
+    if (!stageEl || !fromEl || !toEl) return
+    const stageRect = stageEl.getBoundingClientRect()
+    const fromRect = fromEl.getBoundingClientRect()
+    const toRect = toEl.getBoundingClientRect()
+    const x0 = fromRect.left + fromRect.width / 2 - stageRect.left
+    const y0 = fromRect.top + fromRect.height / 2 - stageRect.top
+    const x1 = toRect.left + toRect.width / 2 - stageRect.left
+    const y1 = toRect.top + toRect.height / 2 - stageRect.top
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    const item = { id, text, x0, y0, x1, y1, go: false }
+    setFlies((prev) => [...prev, item].slice(-6))
+    requestAnimationFrame(() => {
+      setFlies((prev) => prev.map((f) => (f.id === id ? { ...f, go: true } : f)))
+    })
+    window.setTimeout(() => {
+      setFlies((prev) => prev.filter((f) => f.id !== id))
+    }, 750)
   }
 
   const handleDropOnBox = (name) => {
@@ -84,50 +142,54 @@ export default function DragBoxViz() {
     // 数值 → 盒子：赋值 x = 5
     if (dragged.kind === 'value') {
       const token = dragged.payload
-      setBoxes((prev) => ({
+      pushGhost(`${boxName} = ${token.display}`)
+      const prev = boxes
+      const prevBox = prev[boxName]
+      const nextStep = stepCounter + 1
+      const next = {
         ...prev,
-        [boxName]: { ...(prev[boxName] || { name: boxName }), type: token.type, value: token.value },
-      }))
-
-      // 判题与反馈（只在当前任务里针对数值赋值判断）
-      if (boxName === currentTask.targetVar && token.value === currentTask.targetValue) {
-      setFeedback({
-        type: 'correct',
-        text: t('box_drag_correct'),
-      })
-      if (currentTaskIndex < tasks.length - 1) {
-        setTimeout(() => {
-          setCurrentTaskIndex((idx) => idx + 1)
-          setFeedback(null)
-        }, 900)
+        [boxName]: {
+          ...(prev[boxName] || { name: boxName }),
+          type: token.type,
+          value: token.value,
+          lastStep: nextStep,
+          source: token.display,
+        },
       }
-      } else if (boxName !== currentTask.targetVar) {
-        setFeedback({
-          type: 'wrong',
-          text: t('box_drag_wrong_box'),
-        })
-      } else {
-        setFeedback({
-          type: 'wrong',
-          text: t('box_drag_wrong_value'),
-        })
-      }
+      setStepCounter(nextStep)
+      setBoxes(next)
+      pushTrace(`${boxName} = ${token.display}`, next)
+      // 动作可视化：数值直接落入 + 目标盒子短暂发光
+      flashBox(boxName, { flash: 'assign', drop: token.display })
       return
     }
 
     // 盒子 → 盒子：复制 y = x
     if (dragged.kind === 'box') {
       const fromName = dragged.payload
-      setBoxes((prev) => {
-        const fromBox = prev[fromName]
-        if (!fromBox) return prev
-        const next = {
-          ...prev,
-          [boxName]: { ...(prev[boxName] || { name: boxName }), type: fromBox.type, value: fromBox.value },
-        }
-        return next
-      })
-      // 这里暂时不参与任务判定，只做概念示范
+      pushGhost(`${boxName} = ${fromName}`)
+      const prev = boxes
+      const fromBox = prev[fromName]
+      if (!fromBox) return
+      const valueText = formatValue(fromBox.value)
+      const nextStep = stepCounter + 1
+      const next = {
+        ...prev,
+        [boxName]: {
+          ...(prev[boxName] || { name: boxName }),
+          type: fromBox.type,
+          value: fromBox.value,
+          lastStep: nextStep,
+          source: fromName,
+        },
+      }
+      setStepCounter(nextStep)
+      setBoxes(next)
+      pushTrace(`${boxName} = ${fromName}`, next)
+      // 动作可视化：影子值从源飞向目标 + 源高亮 + 目标显示“复制自 y”
+      if (valueText) flyValue(fromName, boxName, valueText)
+      flashBox(fromName, { flash: 'copyFrom' })
+      flashBox(boxName, { flash: 'assign', label: t('box_drag_copied_from', { from: fromName }) })
     }
   }
 
@@ -147,16 +209,14 @@ export default function DragBoxViz() {
 
   const resetBoxes = () => {
     setBoxes({
-      x: { name: 'x', type: 'int', value: null },
-      y: { name: 'y', type: 'int', value: null },
+      x: { name: 'x', type: 'int', value: null, lastStep: null, source: null },
+      y: { name: 'y', type: 'int', value: null, lastStep: null, source: null },
     })
-    setFeedback(null)
-  }
-
-  const restartAll = () => {
-    resetBoxes()
-    setCurrentTaskIndex(0)
-    setFeedback(null)
+    setGhostCode([])
+    setTrace([])
+    setTraceOpen(false)
+    setTraceSelected(-1)
+    setStepCounter(0)
   }
 
   return (
@@ -166,139 +226,308 @@ export default function DragBoxViz() {
         <div className="drag-viz__subtitle">{t('box_drag_subtitle')}</div>
       </div>
 
-      <div className="drag-viz__layout">
-        {/* 左：数字池 */}
-        <div className="drag-viz__column drag-viz__column--pool">
-          <div className="drag-viz__section-title">{t('box_drag_pool_title')}</div>
-          <div className="drag-viz__input-row">
-            <input
-              className="drag-viz__input"
-              value={inputRaw}
-              onChange={(e) => {
-                setInputRaw(e.target.value)
-                setInputError('')
-              }}
-              placeholder={t('box_drag_input_placeholder')}
-            />
+      <div className="drag-viz__layout drag-viz__layout--gold">
+        {/* 左：操作区 */}
+        <div className="drag-viz__column drag-viz__column--tools">
+          <div className="drag-viz__section-title-row">
+            <div className="drag-viz__section-title">{t('box_drag_pool_title')}</div>
+            <div className="drag-viz__section-actions">
+              <button type="button" className="drag-viz__btn drag-viz__btn--xs" onClick={resetBoxes}>
+                {t('reset')}
+              </button>
+            </div>
+          </div>
+          <div className="drag-viz__card">
+            <div className="drag-viz__input-row drag-viz__input-row--stack">
+              <input
+                className="drag-viz__input"
+                value={inputRaw}
+                onChange={(e) => {
+                  setInputRaw(e.target.value)
+                  setInputError('')
+                }}
+                placeholder={t('box_drag_input_placeholder')}
+              />
+            </div>
             <button
               type="button"
-              className="drag-viz__btn"
+              className="drag-viz__btn drag-viz__btn--block"
               onClick={handleGenerateFromInput}
             >
               {t('box_drag_input_generate')}
             </button>
-          </div>
-          {inputError && (
-            <div className="drag-viz__input-hint">{inputError}</div>
-          )}
-          <div className="drag-viz__pool">
-            {pool.map((token, idx) => (
-              <div
-                key={idx}
-                className={`drag-viz__token ${
-                  dragItem && dragItem.kind === 'value' && dragItem.payload === token
-                    ? 'drag-viz__token--dragging'
-                    : ''
-                }`}
-                draggable
-                onDragStart={() => handleDragStartValue(token)}
-                onDragEnd={handleDragEnd}
-              >
-                {token.display}
+            {inputError && (
+              <div className="drag-viz__input-hint">{inputError}</div>
+            )}
+
+            <div className="drag-viz__subrow">
+              <div className="drag-viz__subrow-title">{t('box_drag_var_tokens_title')}</div>
+              <div className="drag-viz__var-tokens">
+                {Object.keys(boxes).map((name) => {
+                  const b = boxes[name]
+                  const disabled = !b || b.value === null || b.value === undefined
+                  return (
+                    <div
+                      key={name}
+                      className={`drag-viz__token drag-viz__token--var ${disabled ? 'drag-viz__token--disabled' : ''}`}
+                      draggable={!disabled}
+                      onDragStart={() => handleDragStartVarToken(name)}
+                      onDragEnd={handleDragEnd}
+                      title={disabled ? t('box_drag_var_token_need_value') : t('box_drag_var_token_hint')}
+                    >
+                      {name}
+                    </div>
+                  )
+                })}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* 中：变量盒子 */}
-        <div className="drag-viz__column drag-viz__column--boxes">
-          <div className="drag-viz__section-title">{t('box_drag_boxes_title')}</div>
-          <div className="drag-viz__boxes">
-            {['x', 'y'].map((name) => {
-              const box = boxes[name]
-              return (
-              <div
-                key={name}
-                className={`drag-viz__box ${
-                  dragOverBox === name ? 'drag-viz__box--over' : ''
-                } ${currentTask.targetVar === name ? 'drag-viz__box--target' : ''}`}
-                draggable
-                onDragStart={() => {
-                  if (box && box.value !== null && box.value !== undefined) {
-                    setDragItem({ kind: 'box', payload: name })
-                    setFeedback(null)
-                  }
-                }}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setDragOverBox(name)
-                }}
-                onDragLeave={() => {
-                  setDragOverBox((prev) => (prev === name ? null : prev))
-                }}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  handleDropOnBox(name)
-                }}
-              >
-                <div className="drag-viz__box-header">
-                  <span className="drag-viz__box-name">{name}</span>
+            <div className="drag-viz__subrow">
+              <div className="drag-viz__subrow-title">{t('box_drag_value_tokens_title')}</div>
+            </div>
+            <div className="drag-viz__pool">
+              {pool.map((token, idx) => (
+                <div
+                  key={idx}
+                  className={`drag-viz__token ${
+                    dragItem && dragItem.kind === 'value' && dragItem.payload === token
+                      ? 'drag-viz__token--dragging'
+                      : ''
+                  }`}
+                  draggable
+                  onDragStart={() => handleDragStartValue(token)}
+                  onDragEnd={handleDragEnd}
+                >
+                  {token.display}
                 </div>
-                <div className="drag-viz__box-body">
-                  {box.value == null ? (
-                    <span className="drag-viz__box-empty">{t('empty')}</span>
-                  ) : (
-                    <span className="drag-viz__box-value">
-                      {typeof box.value === 'boolean'
-                        ? box.value ? 'true' : 'false'
-                        : box.value}
-                    </span>
-                  )}
+              ))}
+            </div>
+          </div>
+
+          {mode === 'guided' && (
+            <div className="drag-viz__card drag-viz__type-hints">
+              <div className="drag-viz__type-hints-title">{t('box_drag_type_examples_title')}</div>
+              <div className="drag-viz__type-hints-list">
+                <div className="drag-viz__type-hints-row">
+                  <span className="drag-viz__type-chip drag-viz__type-chip--int">int</span>
+                  <span className="drag-viz__type-example">{t('box_drag_type_int_example')}</span>
+                </div>
+                <div className="drag-viz__type-hints-row">
+                  <span className="drag-viz__type-chip drag-viz__type-chip--double">double</span>
+                  <span className="drag-viz__type-example">{t('box_drag_type_double_example')}</span>
+                </div>
+                <div className="drag-viz__type-hints-row">
+                  <span className="drag-viz__type-chip drag-viz__type-chip--string">String</span>
+                  <span className="drag-viz__type-example">{t('box_drag_type_string_example')}</span>
+                </div>
+                <div className="drag-viz__type-hints-row">
+                  <span className="drag-viz__type-chip drag-viz__type-chip--boolean">boolean</span>
+                  <span className="drag-viz__type-example">{t('box_drag_type_boolean_example')}</span>
                 </div>
               </div>
-              )
-            })}
-          </div>
-
-          <div className="drag-viz__controls">
-            <button
-              type="button"
-              className="drag-viz__btn"
-              onClick={resetBoxes}
-            >
-              {t('reset')}
-            </button>
-            <button
-              type="button"
-              className="drag-viz__btn drag-viz__btn--ghost"
-              onClick={restartAll}
-            >
-              {t('box_drag_restart')}
-            </button>
-          </div>
-        </div>
-
-        {/* 右：问题区 */}
-        <div className="drag-viz__column drag-viz__column--task">
-          <div className="drag-viz__section-title">
-            {t('box_drag_task_title', { index: currentTaskIndex + 1 })}
-          </div>
-          <div className="drag-viz__prompt">
-            {t(currentTask.promptKey)}
-          </div>
-          <div className="drag-viz__hint">
-            {t('box_drag_hint')}
-          </div>
-
-          {feedback && (
-            <div
-              className={`drag-viz__feedback drag-viz__feedback--${feedback.type}`}
-            >
-              {feedback.text}
+              <div className="drag-viz__type-hints-note">
+                {t('box_drag_type_boolean_note')}
+              </div>
             </div>
           )}
+
+          <div className="drag-viz__section-title">{t('box_drag_mode_title')}</div>
+          <div className="drag-viz__mode-row">
+            <button
+              type="button"
+              className={`drag-viz__btn drag-viz__btn--block ${mode === 'guided' ? 'drag-viz__btn--active' : ''}`}
+              onClick={() => setMode('guided')}
+            >
+              {t('box_drag_mode_guided')}
+            </button>
+            <button
+              type="button"
+              className={`drag-viz__btn drag-viz__btn--ghost drag-viz__btn--block ${mode === 'exam' ? 'drag-viz__btn--active' : ''}`}
+              onClick={() => setMode('exam')}
+            >
+              {t('box_drag_mode_exam')}
+            </button>
+          </div>
         </div>
+
+        {/* 中：变量舞台 */}
+        <div className="drag-viz__column drag-viz__column--stage">
+          <div className="drag-viz__section-title">{t('box_drag_stage_title')}</div>
+          <div className="drag-viz__stage" ref={stageRef}>
+            <div className="drag-viz__drop-hint">{t('box_drag_drop_hint')}</div>
+            <div className="drag-viz__fly-layer" aria-hidden="true">
+              {flies.map((f) => (
+                <div
+                  key={f.id}
+                  className={`drag-viz__fly ${f.go ? 'drag-viz__fly--go' : ''}`}
+                  style={{
+                    left: f.x0,
+                    top: f.y0,
+                    transform: f.go ? `translate(${f.x1 - f.x0}px, ${f.y1 - f.y0}px)` : 'translate(0,0)',
+                  }}
+                >
+                  {f.text}
+                </div>
+              ))}
+            </div>
+            <div className="drag-viz__boxes drag-viz__boxes--stage">
+              {Object.keys(boxes).map((name) => {
+                const box = boxes[name]
+                const fx = boxFx[name] || null
+                return (
+                  <div
+                    key={name}
+                    className={`drag-viz__box ${
+                      dragOverBox === name ? 'drag-viz__box--over' : ''
+                    }`}
+                    ref={(el) => {
+                      if (el) boxRefs.current[name] = el
+                    }}
+                    draggable
+                    onDragStart={() => {
+                      if (box && box.value !== null && box.value !== undefined) {
+                        setDragItem({ kind: 'box', payload: name })
+                      }
+                    }}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setDragOverBox(name)
+                    }}
+                    onDragLeave={() => {
+                      setDragOverBox((prev) => (prev === name ? null : prev))
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      handleDropOnBox(name)
+                    }}
+                  >
+                    {fx?.flash === 'assign' && <div className="drag-viz__fx drag-viz__fx--assign" aria-hidden="true" />}
+                    {fx?.flash === 'copyFrom' && <div className="drag-viz__fx drag-viz__fx--copyfrom" aria-hidden="true" />}
+                    <div className="drag-viz__box-header">
+                      <span className="drag-viz__box-name">{name}</span>
+                      <span className="drag-viz__box-meta">
+                        <span className="drag-viz__box-type">{box.type}</span>
+                        <button
+                          type="button"
+                          className="drag-viz__expand-btn"
+                          onClick={() => {
+                            setBoxFx((prev) => ({
+                              ...prev,
+                              [name]: {
+                                ...(prev[name] || {}),
+                                open: !prev[name]?.open,
+                              },
+                            }))
+                          }}
+                        >
+                          {fx?.open ? t('box_drag_collapse') : t('box_drag_expand')}
+                        </button>
+                      </span>
+                    </div>
+                    <div className="drag-viz__box-body">
+                      {fx?.drop && (
+                        <div className="drag-viz__drop" aria-hidden="true">
+                          <span className="drag-viz__drop-value">{fx.drop}</span>
+                        </div>
+                      )}
+                      {fx?.label && (
+                        <div className="drag-viz__label" aria-hidden="true">
+                          {fx.label}
+                        </div>
+                      )}
+                      {box.value == null ? (
+                        <span className="drag-viz__box-empty">{t('empty')}</span>
+                      ) : (
+                        <span className="drag-viz__box-value">
+                          {typeof box.value === 'boolean'
+                            ? box.value ? 'true' : 'false'
+                            : box.value}
+                        </span>
+                      )}
+                    </div>
+                    {fx?.open && (
+                      <div className="drag-viz__box-detail">
+                        <div className="drag-viz__box-detail-row">
+                          <span className="drag-viz__box-detail-label">{t('box_drag_detail_value')}</span>
+                          <span className="drag-viz__box-detail-value">
+                            {box.value == null ? t('empty') : formatValue(box.value)}
+                          </span>
+                        </div>
+                        <div className="drag-viz__box-detail-row">
+                          <span className="drag-viz__box-detail-label">{t('box_drag_detail_type')}</span>
+                          <span className="drag-viz__box-detail-value">{box.type || '-'}</span>
+                        </div>
+                        <div className="drag-viz__box-detail-row">
+                          <span className="drag-viz__box-detail-label">{t('box_drag_detail_step')}</span>
+                          <span className="drag-viz__box-detail-value">
+                            {box.lastStep == null ? t('box_drag_detail_step_none') : t('box_drag_detail_step_value', { step: box.lastStep })}
+                          </span>
+                        </div>
+                        <div className="drag-viz__box-detail-row">
+                          <span className="drag-viz__box-detail-label">{t('box_drag_detail_source')}</span>
+                          <span className="drag-viz__box-detail-value">
+                            {box.source == null ? t('box_drag_detail_source_none') : box.source}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="drag-viz__ghost">
+              <div className="drag-viz__ghost-header">
+                <div className="drag-viz__ghost-title">{t('box_drag_ghost_title')}</div>
+              </div>
+              {ghostCode.length === 0 ? (
+                <div className="drag-viz__ghost-empty">{t('box_drag_ghost_empty')}</div>
+              ) : (
+                <pre className="drag-viz__ghost-code">
+                  {ghostCode.join('\n')}
+                </pre>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 右栏已移除：只保留“操作区 + 变量舞台”两块 */}
+      </div>
+
+      <div className={`trace-ribbon ${traceOpen ? 'trace-ribbon--open' : ''}`}>
+        <button
+          type="button"
+          className="trace-ribbon__toggle"
+          onClick={() => setTraceOpen((v) => !v)}
+        >
+          {traceOpen ? t('trace_collapse') : t('trace_expand')}
+        </button>
+        {traceOpen && (
+          <div className="trace-ribbon__content">
+            {trace.length === 0 ? (
+              <div className="trace-ribbon__empty">{t('trace_empty')}</div>
+            ) : (
+              <div className="trace-ribbon__items">
+                {trace.map((step, idx) => (
+                  <button
+                    type="button"
+                    key={idx}
+                    className={`trace-ribbon__item ${traceSelected === idx ? 'trace-ribbon__item--active' : ''}`}
+                    onClick={() => {
+                      setBoxes(cloneBoxes(step.snapshot))
+                      setTraceSelected(idx)
+                    }}
+                    title={t('trace_click_to_restore')}
+                  >
+                    {step.label}
+                    {idx < trace.length - 1 ? <span className="trace-ribbon__arrow">→</span> : null}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
