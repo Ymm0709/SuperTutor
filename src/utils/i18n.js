@@ -4,6 +4,94 @@ const translations = {
     // App
     reset: '重置',
     visualModel: 'Visual Model',
+    skip_button: '跳过',
+    skip_modal_title: '跳过验证',
+    skip_modal_desc: '做对以下 3 道题，可直接跳过 Visual Model，进入下一页。（一次机会）',
+    skip_modal_exit: '退出',
+    skip_modal_submit: '提交',
+    skip_modal_need_all: '请先完成 3 道选择题。',
+    skip_modal_wrong: '还有题目不正确，请检查高亮提示后再提交。',
+    skip_modal_one_wrong: '这题选错了，再检查一遍。',
+    skip_modal_fail_inline: '错题：{list}（红框已标出）。跳过功能将被禁用，请完成 Visual Model 才能进入下一页。',
+    skip_modal_pass_inline: '✅ 三题全对！你可以点击「进入下一页」直接跳过 Visual Model。',
+    skip_modal_continue: '进入下一页',
+    skip_locked_hint: '跳过已禁用：请完成 Visual Model 才能进入下一页。',
+
+    skip_q1_title: '题目 1',
+    skip_q1_code: `x ← 0
+y ← 1
+
+FOR EACH value IN inputList
+{
+    IF (value MOD 2 = 0)
+    {
+        x ← x + y
+    }
+    y ← y + 1
+}`,
+    skip_q1_question: `程序运行时，inputList 为 [2, 4, 5, 6]。\n程序结束后，变量 x 和 y 的值是多少？`,
+    skip_q1_opt_A: 'A. x = 6, y = 5',
+    skip_q1_opt_B: 'B. x = 7, y = 5',
+    skip_q1_opt_C: 'C. x = 8, y = 5',
+    skip_q1_opt_D: 'D. x = 9, y = 4',
+
+    skip_q2_title: '题目 2',
+    skip_q2_code: `count ← 0
+total ← 0
+
+FOR EACH number IN inputList
+{
+    IF (number MOD 3 = 0)
+    {
+        count ← count + 1
+        total ← total + number
+    }
+}
+
+IF (count > 0)
+{
+    average ← total / count
+}
+ELSE
+{
+    average ← 0
+}`,
+    skip_q2_question: `程序运行时，inputList 为 [3, 5, 6, 7, 9]。\n哪一项最准确地描述程序结束时变量 count、total 和 average 的值？`,
+    skip_q2_opt_A: 'A. count = 3, total = 18, average = 6',
+    skip_q2_opt_B: 'B. count = 2, total = 18, average = 9',
+    skip_q2_opt_C: 'C. count = 3, total = 18, average = 0',
+    skip_q2_opt_D: 'D. count = 5, total = 30, average = 6',
+
+    skip_q3_title: '题目 3',
+    skip_q3_code: `count ← 0
+sum ← 0
+
+FOR EACH number IN inputList
+{
+    IF (number > 4)
+    {
+        count ← count + 1
+        sum ← sum + number
+    }
+    ELSE
+    {
+        count ← 0
+    }
+}
+
+IF (count > 0)
+{
+    result ← sum / count
+}
+ELSE
+{
+    result ← -1
+}`,
+    skip_q3_question: `程序运行时，inputList 为 [6, 2, 8, 3, 10]。\n程序结束后，count、sum 和 result 的值分别是多少？`,
+    skip_q3_opt_A: 'A. count = 3, sum = 24, result = 8',
+    skip_q3_opt_B: 'B. count = 1, sum = 24, result = 24',
+    skip_q3_opt_C: 'C. count = 2, sum = 18, result = 9',
+    skip_q3_opt_D: 'D. count = 0, sum = 24, result = -1',
     
     // Home
     homeTitle: 'CSP Super Tutor',
@@ -34,6 +122,8 @@ const translations = {
     
     // Visualization
     interactiveVariableModel: 'Interactive Variable Model',
+    boxModelTitle: '盒子模型训练（预测→执行→对比）',
+    dragModelTitle: '拖拽变量实验室（生成→拖拽→反馈）',
     dragToCode: '拖拽值到代码中的变量进行赋值。赋值会覆盖旧值。',
     clickToEditVariables: '点击变量值进行编辑，或使用下方的运算面板进行操作。',
     draggableValues: '可拖拽的值',
@@ -53,10 +143,128 @@ const translations = {
     readValue: '读取 {var} 的值 = {value}',
     calculate: '计算 {var} {op} {operand}',
     storeResult: '将结果存回 {var}',
+    step1Explanation: '（从存储格中读取当前值）',
+    step2Explanation: '（在 CPU 中计算新值，不改变存储格）',
+    step3Explanation: '（把计算结果写回存储格，覆盖旧值）',
     resetAll: 'Reset All',
     keyConcept: '关键概念：',
     assignmentOverwrites: '赋值会覆盖。拖拽新值到变量时，旧值会被替换（不是累加）。',
     operationHistory: '操作历史：',
+    storageSpace: '{bytes} 字节存储空间',
+    runDemo: '运行演示：x=10, y=x, x=5',
+    demoTitle: '演示：为什么 y = x 后，x 改变但 y 不变？',
+    demoStep1: '步骤 1: x ← 10（把 10 存储到 x 的存储格中）',
+    demoStep2: '步骤 2: y ← x（读取 x 当前的值 10，复制到 y 的存储格中）',
+    demoStep3: '步骤 3: x ← 5（把 5 存储到 x 的存储格中，覆盖原来的 10）',
+    demoConclusion: '关键理解：y ← x 是「复制值」，不是「绑定关系」。y 存储的是执行 y ← x 时 x 的值（10），之后 x 改变不会影响 y。',
+    executionReading: '正在读取变量值...',
+    executionCalculating: '正在计算...',
+    executionStoring: '正在存储结果...',
+    typePanelTitle: 'AP 变量类型 与 可存储空间',
+    typeDemoTitle: '变量类型与存储空间演示',
+    typeDemoSubtitle: '了解不同类型的变量如何占用不同的存储空间',
+    demoTypeStep1Title: 'int 类型（整数）',
+    demoTypeStep1Desc: 'int 类型占用 4 个字节的存储空间，可以存储整数，例如：42。适合存储考试分数、计数器等整数值。',
+    demoTypeStep2Title: 'double 类型（小数）',
+    demoTypeStep2Desc: 'double 类型占用 8 个字节的存储空间，可以存储带小数点的实数，例如：3.14159。精度更高，但占用空间也更大。',
+    demoTypeStep3Title: 'String 类型（字符串）',
+    demoTypeStep3Desc: 'String 类型占用的存储空间取决于字符串的长度。例如 "hello" 占用 5 个字节（每个字符 1 字节）。用来存储文本信息，如姓名、消息等。',
+    demoTypeStep4Title: 'boolean 类型（真/假）',
+    demoTypeStep4Desc: 'boolean 类型只需要 1 个字节的存储空间，只能存储 true 或 false。用于存储条件判断的结果。',
+    typeDemoSummary: '变量类型总结',
+    typeTreeTitle: '总览：variable 的四种常见类型',
+    typeTreeDesc: 'variable 可以分成以下四种类型：int 用来存整数，占 4 字节；double 用来存小数，占 8 字节；String 用来存文本（如 "hello"），占用的字节数等于字符数；boolean 用来存 True / False 的判断语句结果，占 1 字节。理解类型，就是理解这个变量这块存储格打算装什么样的数据、占多大空间。',
+    typeTreeStepLabel: '类型总览',
+    showTimeline: '显示时间轴可视化',
+    hideTimeline: '隐藏时间轴可视化',
+    timelineScenario1Title: '场景 1: x = x + 1 为什么成立？',
+    timelineScenario1Desc: '展示 x = x + 1 的执行过程：读取 x 的值 → 计算 x + 1 → 将结果写回 x',
+    timelineScenario1Short: 'x = x + 1',
+    timelineScenario2Title: '场景 2: x = 10, y = x, x = 5 后 y 是多少？',
+    timelineScenario2Desc: '展示变量赋值和复制的执行过程，理解为什么 y 的值不会因为 x 的改变而改变',
+    timelineScenario2Short: 'x=10, y=x, x=5',
+    timelineStep1_1: '初始状态：x = 5',
+    timelineStep1_2: '步骤 1：读取 x 的当前值（5）',
+    timelineStep1_3: '步骤 2：在 CPU 中计算 5 + 1 = 6',
+    timelineStep1_4: '步骤 3：将计算结果（6）写回 x 的存储格，覆盖旧值',
+    timelineStep2_1: '初始状态：x 和 y 都是空的',
+    timelineStep2_2: '步骤 1：将 10 存储到 x 的存储格中',
+    timelineStep2_3: '步骤 2：读取 x 的当前值（10）',
+    timelineStep2_4: '步骤 3：将读取的值（10）复制到 y 的存储格中',
+    timelineStep2_5: '步骤 4：将 5 存储到 x 的存储格中，覆盖原来的 10',
+    timelineStep2_6: '最终结果：x = 5, y = 10（y 的值不会改变，因为它是复制值，不是绑定）',
+    play: '播放',
+    prev: '上一步',
+    next: '下一步',
+    step: '步骤',
+    close: '关闭',
+    minimize: '最小化',
+    minimizeTimeline: '最小化时间轴',
+    timelineMinimized: '时间轴可视化',
+    minimizeTypeDemo: '最小化类型演示',
+    typeDemoMinimized: '变量类型演示',
+    typePanelIntro: '在 AP CS A 中，每个变量都有「类型」，不同类型的变量对应着不同大小的存储格，可以容纳的数值精度和范围也不同（右边的条越长，占用的存储空间越大）：',
+    type_int_title: 'int 整型（整数）',
+    type_int_desc: '大约占 4 个字节，常用来存储考试分数、计数器等整数。范围很大，但不能存小数。',
+    type_double_title: 'double 浮点型（小数）',
+    type_double_desc: '大约占 8 个字节，能存带小数点的实数，精度比 int 更高，但也会有舍入误差。',
+    type_boolean_title: 'boolean 布尔型（真/假）',
+    type_boolean_desc: '只表示 true 或 false，本质上只需要非常小的一块存储空间，用来存储条件判断结果等逻辑值。',
+    
+    // Box model (预测 → 执行 → 对比)
+    box_subtitle: '预测 → 执行 → 对比，用「盒子模型」来理解变量和赋值：每个变量是一只带名字的小盒子，赋值就是往盒子里放卡片/换卡片。',
+    box_code_title: '代码',
+    box_boxes_title: '变量盒子（x 盒子 / y 盒子）',
+    box_boxes_predict_hint: 'Step 1：预测 —— 先不要执行，只用盒子模型想一想：程序跑完以后，每个盒子里会留下什么卡片？',
+    box_predict_title: 'Step 1：预测',
+    box_predict_text: '执行下面代码后，盒子里会是什么？请预测程序执行结束后，x 盒子和 y 盒子里最后各自会留下什么数字。',
+    box_predict_arrow: '：',
+    box_predict_placeholder: '请输入一个数字',
+    box_boolean_placeholder: '请选择 true / false',
+    box_start_execute: 'Step 2：开始执行动画',
+    box_execute_title: 'Step 2：执行动画',
+    box_execute_intro: '一行一行动画执行，观察数字是如何“被拿出来”“被放进盒子”“覆盖旧卡片”的。',
+    box_execute_line: '正在执行：{line}',
+    box_go_compare: 'Step 3：去对比预测',
+    box_compare_title: 'Step 3：对比反馈',
+    box_predicted: '你预测的值',
+    box_actual: '实际盒子里的值',
+    box_feedback_correct_title: '✅ 预测正确！',
+    box_feedback_correct_text: '你已经在用正确的「盒子模型」思考：x 和 y 是两只独立的盒子，y = x 这一行只是把那一刻 x 盒子里的卡片复制一份放进 y 盒子。之后再给 x 换成 5，不会自动去改 y。',
+    box_feedback_shared_box_title: '❌ 你把变量当成“共用同一只盒子”了',
+    box_feedback_shared_box_text: '你的答案里，y 跟着 x 一起变，就像脑中是一只盒子上贴了两个名字标签。正确的盒子模型是：x 和 y 各有一只盒子，y = x 只是把那一刻 x 里的卡片复制一份放进 y，以后给 x 换卡片，不会回头去改 y。',
+    box_feedback_generic_title: '❌ 可以再用盒子顺一遍执行过程',
+    box_feedback_generic_text: '按顺序用盒子想一遍：每一行只会动「左边那只盒子」。右边只是“读出当前卡片上的数字”，不会改盒子本身。先问：这一行要往哪只盒子里放/换卡片？再看：读的是哪只盒子里的当前卡片？',
+    box_scenario_label: '场景 {label}',
+    box_scenario_a: '场景 A：先把 3 放进 x，再把那张卡片抄一份放进 y，最后给 x 换成 5。',
+    box_scenario_b: '场景 B：先给 y 放 7，但最后一行 y = x 会用 x 里的卡片覆盖 y 里的 7。',
+    box_scenario_c: '场景 C：先给 x 放 1，再用「当前的 x+1」填入 y，最后再给 x 自己 +1。',
+    box_scenario_d: '场景 D：先把 4 放进 x，再复制到 y，再复制到 z，最后只给 x 换成 9，y 和 z 不会自动跟着变。',
+    box_scenario_e: '场景 E：布尔盒子 bigger 里装的是一次判断 x > y 的 True/False 结果，而不是两个盒子之间的“连接”。',
+    box_type_int: '整数（如分数、计数器），大约 4 字节。',
+    box_type_double: '带小数点的实数（如平均分），大约 8 字节。',
+    box_type_string: '文本（如 "hello"），长度越长占用越多空间。',
+    box_type_boolean: '判断语句的 True/False 结果，占用空间最小。',
+    box_next_scenario: '下一题',
+    box_free_play: '已通关，继续自由练习这一题',
+    box_all_done_title: '✅ 你已经通关所有盒子场景！',
+    box_all_done_text: '现在你可以自由修改预测，再用「盒子模型」反复练习。也可以回到上方题目区，用同样的思路追踪更难的变量题。',
+    box_progress_title: '小盒子进度',
+    box_drag_subtitle: '通过拖拽数字卡片到变量盒子里，练习“把值放进指定的盒子里”这一最核心的变量含义。',
+    box_drag_pool_title: '左侧：数据池 / 生成器',
+    box_drag_boxes_title: '中间：变量盒子（x 盒子 / y 盒子）',
+    box_drag_task_title: '右侧：练习任务 {index}',
+    box_drag_task1: '请让 x 盒子里的值变成 7。',
+    box_drag_task2: '请让 y 盒子里的值变成 10。',
+    box_drag_hint: '操作方式：用鼠标按住左边的数字卡片，拖到指定的变量盒子上方松开。想一想：这一步是在“往哪只盒子里放什么数”？',
+    box_drag_correct: '✅ 很好！你准确地把正确的数字卡片放进了指定的变量盒子里。变量赋值本质上就是这一步 —— 往某个有名字的盒子里放（或换）一张写着数字的卡片。',
+    box_drag_wrong_box: '❌ 数字对了，但盒子错了。再想想题目在说哪一只变量盒子，例如“让 x 的值变成 7”就必须把 7 放进 x 盒子，而不是 y。',
+    box_drag_wrong_value: '❌ 盒子对了，但数字不对。可以试着换一张卡片，再拖一次，直到盒子里的值和题目要求一致。',
+    box_drag_restart: '重新开始所有拖拽练习',
+    box_drag_input_placeholder: '输入一个值，例如 42, 3.14, "hi", true',
+    box_drag_input_generate: '生成一个值卡片',
+    box_drag_input_error_empty: '请先输入一个值。',
+    box_drag_input_type_info: '你刚刚生成的是一个 {type} 类型的值卡片。',
     
     // Questions - Level 1
     q1_prompt: '执行下面的赋值语句后，variable {var} 的值是多少？（只输入一个数字）',
@@ -136,6 +344,94 @@ const translations = {
     // App
     reset: 'Reset',
     visualModel: 'Visual Model',
+    skip_button: 'Skip',
+    skip_modal_title: 'Skip check',
+    skip_modal_desc: 'Answer all 3 questions correctly to skip the Visual Model and move on. (One attempt)',
+    skip_modal_exit: 'Exit',
+    skip_modal_submit: 'Submit',
+    skip_modal_need_all: 'Please answer all 3 questions first.',
+    skip_modal_wrong: 'Some answers are incorrect. Please check the highlighted questions and try again.',
+    skip_modal_one_wrong: 'Incorrect. Check this one again.',
+    skip_modal_fail_inline: 'Incorrect: {list} (highlighted in red). Skip will be disabled. Please finish the Visual Model to continue.',
+    skip_modal_pass_inline: '✅ All correct! Click “Continue” to skip the Visual Model.',
+    skip_modal_continue: 'Continue',
+    skip_locked_hint: 'Skip disabled: please finish the Visual Model to continue.',
+
+    skip_q1_title: 'Question 1',
+    skip_q1_code: `x ← 0
+y ← 1
+
+FOR EACH value IN inputList
+{
+    IF (value MOD 2 = 0)
+    {
+        x ← x + y
+    }
+    y ← y + 1
+}`,
+    skip_q1_question: `Given inputList = [2, 4, 5, 6].\nAfter the program finishes, what are the values of x and y?`,
+    skip_q1_opt_A: 'A. x = 6, y = 5',
+    skip_q1_opt_B: 'B. x = 7, y = 5',
+    skip_q1_opt_C: 'C. x = 8, y = 5',
+    skip_q1_opt_D: 'D. x = 9, y = 4',
+
+    skip_q2_title: 'Question 2',
+    skip_q2_code: `count ← 0
+total ← 0
+
+FOR EACH number IN inputList
+{
+    IF (number MOD 3 = 0)
+    {
+        count ← count + 1
+        total ← total + number
+    }
+}
+
+IF (count > 0)
+{
+    average ← total / count
+}
+ELSE
+{
+    average ← 0
+}`,
+    skip_q2_question: `Given inputList = [3, 5, 6, 7, 9].\nWhich option best describes the final values of count, total, and average?`,
+    skip_q2_opt_A: 'A. count = 3, total = 18, average = 6',
+    skip_q2_opt_B: 'B. count = 2, total = 18, average = 9',
+    skip_q2_opt_C: 'C. count = 3, total = 18, average = 0',
+    skip_q2_opt_D: 'D. count = 5, total = 30, average = 6',
+
+    skip_q3_title: 'Question 3',
+    skip_q3_code: `count ← 0
+sum ← 0
+
+FOR EACH number IN inputList
+{
+    IF (number > 4)
+    {
+        count ← count + 1
+        sum ← sum + number
+    }
+    ELSE
+    {
+        count ← 0
+    }
+}
+
+IF (count > 0)
+{
+    result ← sum / count
+}
+ELSE
+{
+    result ← -1
+}`,
+    skip_q3_question: `Given inputList = [6, 2, 8, 3, 10].\nAfter the program finishes, what are the values of count, sum, and result?`,
+    skip_q3_opt_A: 'A. count = 3, sum = 24, result = 8',
+    skip_q3_opt_B: 'B. count = 1, sum = 24, result = 24',
+    skip_q3_opt_C: 'C. count = 2, sum = 18, result = 9',
+    skip_q3_opt_D: 'D. count = 0, sum = 24, result = -1',
     
     // Home
     homeTitle: 'CSP Super Tutor',
@@ -164,6 +460,8 @@ const translations = {
     
     // Visualization
     interactiveVariableModel: 'Interactive Variable Model',
+    boxModelTitle: 'Box Model Trainer',
+    dragModelTitle: 'Drag-and-Drop Variable Lab',
     dragToCode: 'Drag values to variables in code to assign. Assignment overwrites old values.',
     clickToEditVariables: 'Click variable values to edit, or use the operation panel below.',
     draggableValues: 'Draggable Values',
@@ -183,10 +481,128 @@ const translations = {
     readValue: 'Read {var} value = {value}',
     calculate: 'Calculate {var} {op} {operand}',
     storeResult: 'Store result back to {var}',
+    step1Explanation: '(read current value from storage cell)',
+    step2Explanation: '(calculate new value in CPU, storage cell unchanged)',
+    step3Explanation: '(write result back to storage cell, overwriting old value)',
     resetAll: 'Reset All',
     keyConcept: 'Key Concept:',
     assignmentOverwrites: 'Assignment overwrites. When dragging a new value to a variable, the old value is replaced (not added).',
     operationHistory: 'Operation History:',
+    storageSpace: '{bytes} bytes of storage',
+    runDemo: 'Run Demo: x=10, y=x, x=5',
+    demoTitle: 'Demo: Why does y stay 10 after x changes to 5?',
+    demoStep1: 'Step 1: x ← 10 (store 10 into x\'s storage cell)',
+    demoStep2: 'Step 2: y ← x (read x\'s current value 10, copy it into y\'s storage cell)',
+    demoStep3: 'Step 3: x ← 5 (store 5 into x\'s storage cell, overwriting the old 10)',
+    demoConclusion: 'Key insight: y ← x is "copying the value", not "binding". y stores the value x had when y ← x executed (10), so later changes to x don\'t affect y.',
+    executionReading: 'Reading variable value...',
+    executionCalculating: 'Calculating...',
+    executionStoring: 'Storing result...',
+    typePanelTitle: 'AP Variable Types & Storage',
+    typeDemoTitle: 'Variable Types & Storage Demo',
+    typeDemoSubtitle: 'Learn how different variable types occupy different storage spaces',
+    demoTypeStep1Title: 'int Type (Integer)',
+    demoTypeStep1Desc: 'int type uses 4 bytes of storage space, can store whole numbers like 42. Good for exam scores, counters, and other integer values.',
+    demoTypeStep2Title: 'double Type (Decimal)',
+    demoTypeStep2Desc: 'double type uses 8 bytes of storage space, can store real numbers with decimals like 3.14159. Higher precision but takes more space.',
+    demoTypeStep3Title: 'String Type (Text)',
+    demoTypeStep3Desc: 'String type uses storage space based on the length of the string. For example, "hello" uses 5 bytes (1 byte per character). Used to store text information like names, messages, etc.',
+    demoTypeStep4Title: 'boolean Type (True/False)',
+    demoTypeStep4Desc: 'boolean type only needs 1 byte of storage space, can only store true or false. Used for storing condition evaluation results.',
+    typeDemoSummary: 'Variable Types Summary',
+    typeTreeTitle: 'Overview: Four common types of variables',
+    typeTreeDesc: 'Think of variable as the root of a tree. Under it, we have different type branches: int for integers (4 bytes), double for decimals (8 bytes), String for text (like "hello", bytes equal to character count), and boolean for true/false (1 byte). Understanding type means understanding what kind of data this storage cell is meant to hold and roughly how much memory it needs.',
+    typeTreeStepLabel: 'Type overview',
+    showTimeline: 'Show Timeline Visualization',
+    hideTimeline: 'Hide Timeline Visualization',
+    timelineScenario1Title: 'Scenario 1: Why does x = x + 1 work?',
+    timelineScenario1Desc: 'Demonstrates the execution of x = x + 1: read x\'s value → calculate x + 1 → write result back to x',
+    timelineScenario1Short: 'x = x + 1',
+    timelineScenario2Title: 'Scenario 2: After x = 10, y = x, x = 5, what is y?',
+    timelineScenario2Desc: 'Demonstrates variable assignment and copying, understanding why y\'s value doesn\'t change when x changes',
+    timelineScenario2Short: 'x=10, y=x, x=5',
+    timelineStep1_1: 'Initial state: x = 5',
+    timelineStep1_2: 'Step 1: Read x\'s current value (5)',
+    timelineStep1_3: 'Step 2: Calculate 5 + 1 = 6 in CPU',
+    timelineStep1_4: 'Step 3: Write the result (6) back to x\'s storage cell, overwriting the old value',
+    timelineStep2_1: 'Initial state: both x and y are empty',
+    timelineStep2_2: 'Step 1: Store 10 into x\'s storage cell',
+    timelineStep2_3: 'Step 2: Read x\'s current value (10)',
+    timelineStep2_4: 'Step 3: Copy the read value (10) into y\'s storage cell',
+    timelineStep2_5: 'Step 4: Store 5 into x\'s storage cell, overwriting the old 10',
+    timelineStep2_6: 'Final result: x = 5, y = 10 (y\'s value doesn\'t change because it\'s a copied value, not a binding)',
+    play: 'Play',
+    prev: 'Prev',
+    next: 'Next',
+    step: 'Step',
+    close: 'Close',
+    minimize: 'Minimize',
+    minimizeTimeline: 'Minimize Timeline',
+    timelineMinimized: 'Timeline Visualization',
+    minimizeTypeDemo: 'Minimize Type Demo',
+    typeDemoMinimized: 'Variable Types Demo',
+    typePanelIntro: 'In AP CS A, every variable has a type. Different types correspond to different-sized storage cells and different ranges/precision of values (a longer bar means more memory per variable):',
+    type_int_title: 'int (integer)',
+    type_int_desc: 'Typically uses about 4 bytes; good for exam scores, counters, and whole numbers. Large range, but cannot store decimals.',
+    type_double_title: 'double (real number)',
+    type_double_desc: 'Typically uses about 8 bytes; can store numbers with decimals and higher precision, but may introduce rounding error.',
+    type_boolean_title: 'boolean (true/false)',
+    type_boolean_desc: 'Represents only true or false, conceptually using a tiny amount of memory; great for conditions and yes/no flags.',
+    
+    // Box model (Predict → Execute → Compare)
+    box_subtitle: 'Use a “box model” to understand variables and assignment: each variable is a named box, and assignment means placing/replacing a card in that box.',
+    box_code_title: 'Code (executed line by line)',
+    box_boxes_title: 'Variable Boxes (storage cells)',
+    box_boxes_predict_hint: 'Do not execute yet. Using the box model only, think: after the program finishes, what card will be left in each box?',
+    box_predict_title: 'Your Prediction',
+    box_predict_text: 'Predict the final number in each variable box after execution. This is not a math equation; it is simply asking “what value will this box end up storing?”.',
+    box_predict_arrow: 'will finally hold',
+    box_predict_placeholder: 'Enter a number',
+    box_boolean_placeholder: 'Choose true / false',
+    box_start_execute: 'Execute step by step with boxes',
+    box_execute_title: 'Execution Phase (box view)',
+    box_execute_intro: 'Click “Next” to execute the code one line at a time and watch how cards are placed/copied/overwritten inside the boxes.',
+    box_execute_line: 'Executing: {line}',
+    box_go_compare: 'See result and compare',
+    box_compare_title: 'Compare your prediction with the actual boxes',
+    box_predicted: 'Your predicted value',
+    box_actual: 'Actual value in the box',
+    box_feedback_correct_title: 'Nice! Your box model is correct.',
+    box_feedback_correct_text: 'You correctly treated variables as separate boxes: y just copied the card from x at that moment; later when x\'s box is changed to 5, it does not go back and change y\'s box.',
+    box_feedback_shared_box_title: 'You treated variables as “sharing the same box”',
+    box_feedback_shared_box_text: 'In your answer, y changes together with x, which suggests a mental model like “two names stuck on one box”. In reality, x and y are two different boxes: y = x just copies the card from x at that moment into y; later changes to x do not automatically update y.',
+    box_feedback_generic_title: 'Try replaying the execution with boxes',
+    box_feedback_generic_text: 'Think in order: Which box did we put a card into first? Later, did we replace a card in some box? The key is: each line only changes the box on the LEFT side; the RIGHT side is just “reading the current number on that card”.',
+    box_scenario_label: 'Scenario {label}',
+    box_scenario_a: 'Scenario A: Put 3 into x, copy that card into y, then change x to 5.',
+    box_scenario_b: 'Scenario B: First put 7 into y, then y = x overwrites y with whatever is in x, and finally z gets a copy of y\'s card (2).',
+    box_scenario_c: 'Scenario C: x starts as 1, y gets a copy of x+1, then x is increased by 1.',
+    box_scenario_d: 'Scenario D: 4 is copied from x to y, then from y to z. Only x\'s box is changed to 9 at the end; y and z keep their copied 4.',
+    box_scenario_e: 'Scenario E: bigger is a boolean box that stores the True/False result of the comparison x > y, not a link between the two variables.',
+    box_type_int: 'Integers (scores, counters), about 4 bytes.',
+    box_type_double: 'Real numbers with decimals (averages, measurements), about 8 bytes.',
+    box_type_string: 'Text (like "hello"), memory depends on length.',
+    box_type_boolean: 'True/False results of conditions, uses very little space.',
+    box_next_scenario: 'Next exercise',
+    box_free_play: 'All done! Keep practicing this scenario freely',
+    box_all_done_title: '✅ You have completed all box scenarios!',
+    box_all_done_text: 'Now you can freely change your predictions and re-run the box model, or go back to the question panel and apply the same mental model to harder variable problems.',
+    box_progress_title: 'Progress',
+    box_drag_subtitle: 'Use drag-and-drop cards to practice the core meaning of assignment: “put this value into that named box”.',
+    box_drag_pool_title: 'Left: Data pool / generator',
+    box_drag_boxes_title: 'Middle: Variable boxes (x / y)',
+    box_drag_task_title: 'Right: Practice {index}',
+    box_drag_task1: 'Make the value of x become 7.',
+    box_drag_task2: 'Make the value of y become 10.',
+    box_drag_hint: 'How to operate: click and hold a number card on the left, drag it onto a variable box, then release. Always ask: “Which box am I putting this value into?”.',
+    box_drag_correct: '✅ Nice! You placed the correct number card into the correct variable box. That is exactly what assignment does — it puts (or replaces) a value card inside a named box.',
+    box_drag_wrong_box: '❌ The number is right, but the box is wrong. Read the prompt carefully: if it says “make x become 7”, then 7 must go into the x box, not y.',
+    box_drag_wrong_value: '❌ The box is right, but the number is not. Try dragging a different card until the value stored in that box matches the requirement.',
+    box_drag_restart: 'Restart drag-and-drop practice',
+    box_drag_input_placeholder: 'Type a value, e.g. 42, 3.14, "hi", true',
+    box_drag_input_generate: 'Generate value card',
+    box_drag_input_error_empty: 'Please enter a value first.',
+    box_drag_input_type_info: 'You just created a {type} value card.',
     
     // Questions - Level 1
     q1_prompt: 'After executing the assignment statement below, what is the value of variable {var}? (Enter only a number)',

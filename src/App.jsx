@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import Visualization from './components/Visualization'
 import TeachingLoop from './components/TeachingLoop'
 import Home from './components/Home'
+import TypeDemo from './components/TypeDemo'
+import DragBoxViz from './components/DragBoxViz'
 import { generateQuestion, normalizeAnswer } from './utils/questionGenerator'
 import { clearState, defaultState, loadState, saveState } from './utils/stateManager'
 import { useLanguage } from './contexts/LanguageContext'
@@ -16,10 +18,22 @@ export default function App() {
   const [question, setQuestion] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [view, setView] = useState('home')
+  const [showDemo, setShowDemo] = useState(false)
+  const [demoCompleted, setDemoCompleted] = useState(false)
+  const [demoMinimized, setDemoMinimized] = useState(false)
+  const [boxTrainerDone, setBoxTrainerDone] = useState(false) // 盒子模型是否已通关
   const [resultBanner, setResultBanner] = useState(null) // { type: 'correct'|'wrong', text: string }
   const [locked, setLocked] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [showAnswer, setShowAnswer] = useState(false) // 是否显示答案
+
+  // 越级（跳过 Visual Model）弹窗
+  const [skipOpen, setSkipOpen] = useState(false)
+  const [skipAnswers, setSkipAnswers] = useState({ q1: '', q2: '', q3: '' })
+  const [skipChecked, setSkipChecked] = useState(false)
+  const [skipError, setSkipError] = useState('')
+  const [skipLockedOut, setSkipLockedOut] = useState(false)
+  const [skipPassed, setSkipPassed] = useState(false)
 
   useEffect(() => {
     saveState(tutorState)
@@ -81,10 +95,25 @@ export default function App() {
       answeredQuestionIds: [], // 重置时清空已做题目列表
     })
     setView('tutor')
+    setShowDemo(true)
+    setDemoCompleted(false)
+    setBoxTrainerDone(false)
     setHasSubmitted(false)
     setShowAnswer(false)
-    // 进入后直接出第一题
-    setTimeout(() => nextQuestion(), 0)
+    // 不直接出题，等演示完成
+  }
+
+  const handleDemoComplete = () => {
+    setDemoCompleted(true)
+    setShowDemo(false)
+  }
+
+  const handleDemoMinimize = () => {
+    setDemoMinimized(true)
+    setShowDemo(false)
+    if (!demoCompleted) {
+      setDemoCompleted(true)
+    }
   }
 
   const reset = () => {
@@ -96,6 +125,9 @@ export default function App() {
     setResultBanner(null)
     setLocked(false)
     setShowAnswer(false)
+    setShowDemo(false)
+    setDemoCompleted(false)
+    setBoxTrainerDone(false)
     setView('home')
   }
 
@@ -255,6 +287,65 @@ export default function App() {
     setTimeout(() => nextQuestion(), 0)
   }
 
+  const skipQuestions = [
+    { id: 'q1', correct: 'C' },
+    { id: 'q2', correct: 'A' },
+    { id: 'q3', correct: 'B' },
+  ]
+
+  const handleOpenSkip = () => {
+    if (skipLockedOut) return
+    setSkipOpen(true)
+    setSkipChecked(false)
+    setSkipError('')
+    setSkipPassed(false)
+    setSkipAnswers({ q1: '', q2: '', q3: '' })
+  }
+
+  const handleCloseSkip = () => {
+    setSkipOpen(false)
+    setSkipChecked(false)
+    setSkipError('')
+  }
+
+  const handleContinueSkip = () => {
+    // 全对后由用户点“进入下一页”
+    setSkipError('')
+    setSkipOpen(false)
+    setBoxTrainerDone(true)
+    setQuestion(null)
+    setResultBanner(null)
+    setLocked(false)
+    setHasSubmitted(false)
+    setShowAnswer(false)
+    setTimeout(() => nextQuestion(), 500)
+  }
+
+  const handleSubmitSkip = () => {
+    // 一次性机会：只要提交失败（未做完/有错）就锁死并退出弹窗
+    const wrongNums = []
+    for (let i = 0; i < skipQuestions.length; i++) {
+      const q = skipQuestions[i]
+      const num = i + 1
+      const chosen = (skipAnswers[q.id] || '').trim().toUpperCase()
+      if (!chosen || chosen !== q.correct) wrongNums.push(num)
+    }
+
+    if (wrongNums.length > 0) {
+      const list = wrongNums.join(', ')
+      // 标红错题 + 提示，然后退出弹窗并禁用
+      setSkipChecked(true)
+      setSkipError(t('skip_modal_fail_inline', { list }))
+      setSkipLockedOut(true) // 立刻禁用跳过（用户退出后按钮会变灰）
+      return
+    }
+
+    // 全对：停留在弹窗内，提示通过，让用户点击“进入下一页”
+    setSkipChecked(true)
+    setSkipPassed(true)
+    setSkipError('')
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -288,29 +379,157 @@ export default function App() {
       {view === 'home' ? (
         <Home onStart={start} />
       ) : (
-        <main className="layout">
-          <section className="panel panel--question">
-            <TeachingLoop
-              state={tutorState}
-              question={question}
-              banner={resultBanner}
-              onNextQuestion={nextQuestion}
-              onSubmitAnswer={submitAnswer}
-              onHint={revealHint}
-              locked={locked}
-              showAnswerButton={showAnswerButton}
-              onShowAnswer={handleShowAnswer}
-              correctAnswer={getCorrectAnswer()}
-              answerRevealsRemaining={tutorState.answerButtonUses}
-              showAnswer={showAnswer}
-            />
-          </section>
+        <main className={boxTrainerDone ? 'layout' : 'layout layout--single'}>
+          {showDemo ? (
+            <div className="demo-container">
+              <TypeDemo 
+                onComplete={handleDemoComplete}
+                isMinimized={false}
+                onMinimize={handleDemoMinimize}
+              />
+            </div>
+          ) : (
+            <>
+              {boxTrainerDone ? (
+                <>
+                  <section className="panel panel--question">
+                    <TeachingLoop
+                      state={tutorState}
+                      question={question}
+                      banner={resultBanner}
+                      onNextQuestion={nextQuestion}
+                      onSubmitAnswer={submitAnswer}
+                      onHint={revealHint}
+                      locked={locked}
+                      showAnswerButton={showAnswerButton}
+                      onShowAnswer={handleShowAnswer}
+                      correctAnswer={getCorrectAnswer()}
+                      answerRevealsRemaining={tutorState.answerButtonUses}
+                      showAnswer={showAnswer}
+                    />
+                  </section>
 
-          <section className="panel panel--viz">
-            <h2 className="panel__title">{t('visualModel')}</h2>
-            <Visualization />
-          </section>
+                  <section className="panel panel--viz">
+                    <div className="panel__title-row">
+                      <h2 className="panel__title">{t('visualModel')}</h2>
+                    </div>
+                    <DragBoxViz />
+                  </section>
+                </>
+              ) : (
+                <section className="panel panel--viz panel--full">
+                  <div className="panel__title-row">
+                    <h2 className="panel__title">{t('visualModel')}</h2>
+                    <button
+                      type="button"
+                      className={`panel__title-action ${skipLockedOut ? 'panel__title-action--disabled' : ''}`}
+                      onClick={handleOpenSkip}
+                      disabled={skipLockedOut}
+                    >
+                      {t('skip_button')}
+                    </button>
+                  </div>
+                  {skipLockedOut && (
+                    <div className="panel__title-hint">
+                      {t('skip_locked_hint')}
+                    </div>
+                  )}
+                  <Visualization
+                    onAllDone={() => {
+                      setBoxTrainerDone(true)
+                      // 盒子模型通关后再出第一题
+                      setTimeout(() => nextQuestion(), 500)
+                    }}
+                  />
+                </section>
+              )}
+            </>
+          )}
+          
+          {demoMinimized && (
+            <TypeDemo 
+              onComplete={null}
+              isMinimized={true}
+              onMinimize={() => {
+                setDemoMinimized(false)
+                setShowDemo(true)
+              }}
+            />
+          )}
         </main>
+      )}
+
+      {skipOpen && (
+        <div className="skip-modal" role="dialog" aria-modal="true">
+          <div className="skip-modal__backdrop" onClick={handleCloseSkip} />
+          <div className="skip-modal__panel">
+            <div className="skip-modal__header">
+              <div className="skip-modal__title">{t('skip_modal_title')}</div>
+              <button type="button" className="skip-modal__close" onClick={handleCloseSkip}>
+                ×
+              </button>
+            </div>
+            <div className="skip-modal__desc">{t('skip_modal_desc')}</div>
+
+            <div className="skip-modal__body">
+              {skipQuestions.map((q, idx) => {
+                const id = q.id
+                const chosen = (skipAnswers[id] || '').toUpperCase()
+                const wrong = skipChecked && (!chosen || chosen !== q.correct)
+                return (
+                  <div key={id} className={`skip-modal__q ${wrong ? 'skip-modal__q--wrong' : ''}`}>
+                    <div className="skip-modal__q-title">{t(`skip_${id}_title`)}</div>
+                    <pre className="skip-modal__code">{t(`skip_${id}_code`)}</pre>
+                    <div className="skip-modal__q-text">{t(`skip_${id}_question`)}</div>
+                    <div className="skip-modal__options">
+                      {['A', 'B', 'C', 'D'].map((opt) => (
+                        <label key={opt} className="skip-modal__opt">
+                          <input
+                            type="radio"
+                            name={id}
+                            value={opt}
+                            checked={skipAnswers[id] === opt}
+                            onChange={() => {
+                              setSkipAnswers((prev) => ({ ...prev, [id]: opt }))
+                              setSkipError('')
+                            }}
+                          />
+                          <span className="skip-modal__opt-text">{t(`skip_${id}_opt_${opt}`)}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {wrong && <div className="skip-modal__wrong">{t('skip_modal_one_wrong')}</div>}
+                  </div>
+                )
+              })}
+            </div>
+
+            {skipPassed && (
+              <div className="skip-modal__success">{t('skip_modal_pass_inline')}</div>
+            )}
+            {skipError && <div className="skip-modal__error">{skipError}</div>}
+
+            <div className="skip-modal__footer">
+              <button type="button" className="btn btn--ghost" onClick={handleCloseSkip}>
+                {t('skip_modal_exit')}
+              </button>
+              {skipPassed ? (
+                <button type="button" className="btn" onClick={handleContinueSkip}>
+                  {t('skip_modal_continue')}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={handleSubmitSkip}
+                  disabled={skipLockedOut}
+                >
+                  {t('skip_modal_submit')}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
