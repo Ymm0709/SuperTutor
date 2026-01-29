@@ -289,7 +289,7 @@ export default function DragBoxViz() {
               {pool.map((token, idx) => (
                 <div
                   key={idx}
-                  className={`drag-viz__token ${
+                  className={`drag-viz__token drag-viz__token--${token.type || 'int'} ${
                     dragItem && dragItem.kind === 'value' && dragItem.payload === token
                       ? 'drag-viz__token--dragging'
                       : ''
@@ -297,6 +297,7 @@ export default function DragBoxViz() {
                   draggable
                   onDragStart={() => handleDragStartValue(token)}
                   onDragEnd={handleDragEnd}
+                  data-type={token.type === 'int' ? 'int' : token.type === 'double' ? 'double' : token.type === 'string' ? 'String' : token.type === 'boolean' ? 'boolean' : 'int'}
                 >
                   {token.display}
                 </div>
@@ -377,7 +378,7 @@ export default function DragBoxViz() {
                 return (
                   <div
                     key={name}
-                    className={`drag-viz__box ${
+                    className={`drag-viz__box drag-viz__box--${box.type || 'int'} ${
                       dragOverBox === name ? 'drag-viz__box--over' : ''
                     }`}
                     ref={(el) => {

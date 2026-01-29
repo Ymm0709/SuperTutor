@@ -21,7 +21,8 @@ export default function App() {
   const [showDemo, setShowDemo] = useState(false)
   const [demoCompleted, setDemoCompleted] = useState(false)
   const [demoMinimized, setDemoMinimized] = useState(false)
-  const [boxTrainerDone, setBoxTrainerDone] = useState(false) // 盒子模型是否已通关
+  const [boxTrainerDone, setBoxTrainerDone] = useState(false) // 是否已经进入下一页（题目 + 拖拽工坊）
+  const [boxTrainerCleared, setBoxTrainerCleared] = useState(false) // 盒子模型五个场景是否全部通过
   const [resultBanner, setResultBanner] = useState(null) // { type: 'correct'|'wrong', text: string }
   const [locked, setLocked] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
@@ -98,6 +99,7 @@ export default function App() {
     setShowDemo(true)
     setDemoCompleted(false)
     setBoxTrainerDone(false)
+    setBoxTrainerCleared(false)
     setHasSubmitted(false)
     setShowAnswer(false)
     // 不直接出题，等演示完成
@@ -128,6 +130,7 @@ export default function App() {
     setShowDemo(false)
     setDemoCompleted(false)
     setBoxTrainerDone(false)
+    setBoxTrainerCleared(false)
     setView('home')
   }
 
@@ -434,13 +437,35 @@ export default function App() {
                       {t('skip_locked_hint')}
                     </div>
                   )}
-                  <Visualization
-                    onAllDone={() => {
-                      setBoxTrainerDone(true)
-                      // 盒子模型通关后再出第一题
-                      setTimeout(() => nextQuestion(), 500)
-                    }}
-                  />
+                  {boxTrainerCleared ? (
+                    <div className="box-complete">
+                      <div className="box-complete__card">
+                        <div className="box-complete__title">{t('box_complete_title')}</div>
+                        <div className="box-complete__text">{t('box_complete_text')}</div>
+                        <button
+                          type="button"
+                          className="btn box-complete__btn"
+                          onClick={() => {
+                            setBoxTrainerDone(true)
+                            setQuestion(null)
+                            setResultBanner(null)
+                            setLocked(false)
+                            setHasSubmitted(false)
+                            setShowAnswer(false)
+                            setTimeout(() => nextQuestion(), 500)
+                          }}
+                        >
+                          {t('box_complete_next')}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Visualization
+                      onAllDone={() => {
+                        setBoxTrainerCleared(true)
+                      }}
+                    />
+                  )}
                 </section>
               )}
             </>

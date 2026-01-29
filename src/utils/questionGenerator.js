@@ -351,12 +351,191 @@ function convertQuestionFromJSON(qJson) {
     };
   }
 
+  // 构建 reteach：根据 misconception 类型提供针对性的内容
+  const getReteachForMisconception = (misconceptionKey, level) => {
+    const misconceptionMap = {
+      'assignment_vs_comparison': {
+        zh: {
+          title: '把赋值当成等号/判断',
+          text: '赋值语句 x ← 5 的含义是：把 5 写进名为 x 的变量里。← 不是等号，不是在判断 x 是否等于 5。',
+          analogy: '像给贴着"x"标签的抽屉里放入一张写着"5"的卡片。放进去以后，这个变量的值就是 5。\n\n也可以这样想：变量像是一个带名字的盒子，赋值就是往盒子里放数字卡片。',
+          hint: '只需要回答"赋值后这个变量里是什么数字"。',
+        },
+        en: {
+          title: 'Treating assignment as equals/comparison',
+          text: 'The assignment statement x ← 5 means: write 5 into the variable named x. ← is not an equals sign, it\'s not checking if x equals 5.',
+          analogy: 'Like putting a card with "5" into a drawer labeled "x". After putting it in, the value of this variable is 5.\n\nYou can also think of it this way: a variable is like a box with a name, and assignment is putting a number card into the box.',
+          hint: 'Just answer: "What number is in this variable after the assignment?"',
+        },
+      },
+      'variable_storage': {
+        zh: {
+          title: '变量一次只能存储一个值',
+          text: '变量就像一个盒子，一次只能装一张卡片。新的赋值会覆盖旧的值。',
+          analogy: '像抽屉里只能放一张卡片，放新卡片时，旧卡片会被替换。\n\n也可以这样想：变量盒子每次只能装一个数字，赋值就是换卡片。',
+          hint: '记住：变量在任何时刻都只有一个值。',
+        },
+        en: {
+          title: 'A variable stores only one value at a time',
+          text: 'A variable is like a box that can only hold one card at a time. A new assignment overwrites the old value.',
+          analogy: 'Like a drawer that can only hold one card - when you put in a new card, the old one is replaced.\n\nYou can also think of it this way: a variable box can only hold one number at a time, and assignment is swapping cards.',
+          hint: 'Remember: a variable has only one value at any moment.',
+        },
+      },
+      'reassignment_confusion': {
+        zh: {
+          title: '赋值=覆盖盒子里的内容（按顺序执行）',
+          text: '程序从上到下执行。每次赋值都会把"左边变量当前的值"替换成右边的新值（最后一次赋值生效）。',
+          analogy: '像白板上写数字：先写第一个数，后面再写第二个数，最后看到的是第二个数。\n\n也可以这样想：变量盒子像是一个可以换卡片的盒子，每次赋值就是换一张新卡片，旧的卡片会被扔掉。',
+          hint: '抓住关键：最终值由"最后一次对它赋值的语句"决定。',
+        },
+        en: {
+          title: 'Assignment = Overwriting the content in the box (executed in order)',
+          text: 'The program executes from top to bottom. Each assignment replaces "the current value of the variable on the left" with the new value on the right (last assignment wins).',
+          analogy: 'Like writing numbers on a whiteboard: first write the first number, then write the second number later, what you see at the end is the second number.\n\nYou can also think of it this way: a variable box is like a box where you can swap cards. Each assignment replaces the old card with a new one, and the old card is discarded.',
+          hint: 'Key point: The final value is determined by "the last statement that assigns to it".',
+        },
+      },
+      'self_reference_confusion': {
+        zh: {
+          title: '自增：先读取旧值，再计算，最后覆盖',
+          text: 'x ← x + 1 的执行过程：先从 x 盒子读取当前值，在 CPU 里计算（当前值 + 1），再把结果写回 x 盒子。',
+          analogy: '像数钱：先把钱包里的钱拿出来数，加上新的一元，再把总数放回钱包。\n\n也可以这样想：先把盒子里的卡片拿出来看数字，算出新数字，再把新卡片放回盒子。',
+          hint: '关键：先"读"当前值，再"算"新值，最后"写"回盒子。',
+        },
+        en: {
+          title: 'Increment: Read old value, calculate, then overwrite',
+          text: 'The execution of x ← x + 1: first read the current value from x\'s box, calculate (current value + 1) in the CPU, then write the result back to x\'s box.',
+          analogy: 'Like counting money: first take the money out of the wallet to count, add one more dollar, then put the total back in the wallet.\n\nYou can also think of it this way: first take the card out of the box to see the number, calculate the new number, then put the new card back in the box.',
+          hint: 'Key: first "read" the current value, then "calculate" the new value, finally "write" it back to the box.',
+        },
+      },
+      'thinking_variables_are_linked': {
+        zh: {
+          title: 'y ← x：复制"此刻的值"，不是建立"绑定关系"',
+          text: '把右边这个变量里"当前看到的数字"复制一份，写进左边的变量。复制完成后，这两个变量互不影响。',
+          analogy: '像抄作业：你把 x 现在写的数字抄到 y 的纸上。之后 x 改了，不会自动改你的 y 那张纸。\n\n也可以这样想：x 和 y 是两个独立的盒子。y ← x 只是把 x 盒子里的卡片"复印"一份放进 y 盒子。之后给 x 换卡片，y 盒子里的卡片不会自动跟着变。',
+          hint: '先回答：执行到 y ← x 那一行时，x 是多少？那就是 y 的最终值（除非后面又给 y 赋值）。',
+        },
+        en: {
+          title: 'y ← x: Copy "the value at this moment", not establish "a binding relationship"',
+          text: 'Copy the "currently visible number" in the variable on the right, and write it into the variable on the left. After copying, these two variables do not affect each other.',
+          analogy: 'Like copying homework: you copy the number x currently has to y\'s paper. After x changes, it won\'t automatically change your y paper.\n\nYou can also think of it this way: x and y are two independent boxes. y ← x just "photocopies" the card in x\'s box and puts it into y\'s box. After you change the card in x\'s box, the card in y\'s box won\'t automatically change.',
+          hint: 'First answer: when executing the line y ← x, what is x? That is y\'s final value (unless y is assigned again later).',
+        },
+      },
+      'expression_not_evaluated': {
+        zh: {
+          title: '表达式要先计算，再赋值',
+          text: '赋值语句右边如果是表达式（如 6 + 2），会先计算出结果（8），再把结果写进变量。',
+          analogy: '像做数学题：先算出答案，再把答案写进盒子里。\n\n也可以这样想：CPU 先算出表达式的结果，再把结果卡片放进变量盒子。',
+          hint: '记住：先计算表达式，再把计算结果赋值给变量。',
+        },
+        en: {
+          title: 'Expressions must be evaluated before assignment',
+          text: 'If the right side of an assignment is an expression (like 6 + 2), it is first calculated to get the result (8), then the result is written into the variable.',
+          analogy: 'Like doing math: first calculate the answer, then write the answer into the box.\n\nYou can also think of it this way: the CPU first calculates the expression\'s result, then puts the result card into the variable box.',
+          hint: 'Remember: first evaluate the expression, then assign the result to the variable.',
+        },
+      },
+      'copy_vs_reference': {
+        zh: {
+          title: 'y ← x：复制"此刻的值"，不是建立"绑定关系"',
+          text: '把右边这个变量里"当前看到的数字"复制一份，写进左边的变量。复制完成后，这两个变量互不影响。',
+          analogy: '像抄作业：你把 x 现在写的数字抄到 y 的纸上。之后 x 改了，不会自动改你的 y 那张纸。\n\n也可以这样想：x 和 y 是两个独立的盒子。y ← x 只是把 x 盒子里的卡片"复印"一份放进 y 盒子。之后给 x 换卡片，y 盒子里的卡片不会自动跟着变。',
+          hint: '先回答：执行到 y ← x 那一行时，x 是多少？那就是 y 的最终值（除非后面又给 y 赋值）。',
+        },
+        en: {
+          title: 'y ← x: Copy "the value at this moment", not establish "a binding relationship"',
+          text: 'Copy the "currently visible number" in the variable on the right, and write it into the variable on the left. After copying, these two variables do not affect each other.',
+          analogy: 'Like copying homework: you copy the number x currently has to y\'s paper. After x changes, it won\'t automatically change your y paper.\n\nYou can also think of it this way: x and y are two independent boxes. y ← x just "photocopies" the card in x\'s box and puts it into y\'s box. After you change the card in x\'s box, the card in y\'s box won\'t automatically change.',
+          hint: 'First answer: when executing the line y ← x, what is x? That is y\'s final value (unless y is assigned again later).',
+        },
+      },
+    };
+    
+    const currentLang = getLanguage();
+    const langKey = currentLang === 'zh' ? 'zh' : 'en';
+    const mapped = misconceptionMap[misconceptionKey];
+    
+    if (mapped && mapped[langKey]) {
+      return mapped[langKey];
+    }
+    
+    // 如果没有找到映射，根据 level 返回通用的 reteach
+    if (level === 1) {
+      return {
+        zh: {
+          title: t('q1_reteach_title'),
+          text: t('q1_reteach_text'),
+          analogy: t('q1_reteach_analogy'),
+          hint: t('q1_reteach_hint'),
+        },
+        en: {
+          title: t('q1_reteach_title'),
+          text: t('q1_reteach_text'),
+          analogy: t('q1_reteach_analogy'),
+          hint: t('q1_reteach_hint'),
+        },
+      }[langKey];
+    } else if (level === 2) {
+      return {
+        zh: {
+          title: t('q2_reteach_title'),
+          text: t('q2_reteach_text'),
+          analogy: t('q2_reteach_analogy', { a: '', b: '' }),
+          hint: t('q2_reteach_hint'),
+        },
+        en: {
+          title: t('q2_reteach_title'),
+          text: t('q2_reteach_text'),
+          analogy: t('q2_reteach_analogy', { a: '', b: '' }),
+          hint: t('q2_reteach_hint'),
+        },
+      }[langKey];
+    } else if (level === 3) {
+      return {
+        zh: {
+          title: t('q3_reteach_title'),
+          text: t('q3_reteach_text'),
+          analogy: t('q3_reteach_analogy'),
+          hint: t('q3_reteach_hint'),
+        },
+        en: {
+          title: t('q3_reteach_title'),
+          text: t('q3_reteach_text'),
+          analogy: t('q3_reteach_analogy'),
+          hint: t('q3_reteach_hint'),
+        },
+      }[langKey];
+    }
+    
+    // 默认返回
+    return {
+      zh: {
+        title: '核心概念',
+        text: hintText || '请仔细理解变量的赋值过程。',
+        analogy: '变量就像带名字的盒子，赋值就是往盒子里放数字卡片。',
+        hint: '一步一步跟踪变量的变化。',
+      },
+      en: {
+        title: 'Key Concept',
+        text: hintText || 'Please carefully understand the variable assignment process.',
+        analogy: 'A variable is like a box with a name, and assignment is putting a number card into the box.',
+        hint: 'Track variable changes step by step.',
+      },
+    }[langKey];
+  };
+  
+  const misconceptionKey = qJson.misconception || '';
+  const reteachContent = getReteachForMisconception(misconceptionKey, qJson.level || 1);
+  
   // 构建 reteach
   const reteach = {
-    title: qJson.misconception || 'Key Concept',
-    text: hintText || '',
-    analogy: '',
-    hint: hintText || '',
+    title: reteachContent.title,
+    text: reteachContent.text,
+    analogy: reteachContent.analogy,
+    hint: reteachContent.hint,
   };
 
   return {

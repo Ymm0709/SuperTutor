@@ -250,6 +250,9 @@ ELSE
     box_all_done_title: '✅ 你已经通关所有盒子场景！',
     box_all_done_text: '现在你可以自由修改预测，再用「盒子模型」反复练习。也可以回到上方题目区，用同样的思路追踪更难的变量题。',
     box_progress_title: '小盒子进度',
+    box_complete_title: '✅ 变量盒子模型基础已完成',
+    box_complete_text: '你已经用「盒子模型」跑完了 5 个典型场景：复制、不共享盒子、自增、链式复制、布尔判断。接下来，我们会在左侧用题目来考你是否真的能用这个模型追踪变量的变化。',
+    box_complete_next: '进入下一板块 →',
     box_drag_subtitle: '拖拽值卡片或变量盒子，练习赋值与复制。',
     box_drag_pool_title: '操作区',
     box_drag_boxes_title: '变量舞台',
@@ -317,10 +320,10 @@ ELSE
     q1_feedback_equals: '你输入了"="。这里的 ← 表示把右边的值写进左边的 variable，不是在判断对不对。',
     q1_misconception_name: '把变量当成名称而不是盒子',
     q1_feedback_name: '看起来你没有给出一个数字。题目问的是"这个 variable 的值"。',
-    q1_reteach_title: '核心模型：variable 就是一个"有名字的存储位置"',
-    q1_reteach_text: '赋值语句 x ← 5 的含义是：把 5 写进名为 x 的 variable 里。原来是什么（甚至是空的）都会被覆盖成 5。',
-    q1_reteach_analogy: '像给贴着"x"标签的抽屉里放入一张写着"5"的卡片。放进去以后，这个 variable 的值就是 5。',
-    q1_reteach_hint: '只需要回答"赋值后这个 variable 里是什么数字"。',
+    q1_reteach_title: '核心模型：变量就是一个"有名字的存储位置"',
+    q1_reteach_text: '赋值语句 x ← 5 的含义是：把 5 写进名为 x 的变量里。原来是什么（甚至是空的）都会被覆盖成 5。',
+    q1_reteach_analogy: '像给贴着"x"标签的抽屉里放入一张写着"5"的卡片。放进去以后，这个变量的值就是 5。\n\n也可以这样想：变量像是一个带名字的盒子，赋值就是往盒子里放数字卡片。',
+    q1_reteach_hint: '只需要回答"赋值后这个变量里是什么数字"。',
     q1_visual_arrow: '把右边的值 {value} 复制进左边的 variable：{var}',
     
     // Questions - Level 2
@@ -331,8 +334,8 @@ ELSE
     q2_feedback_order: '再按顺序执行一遍：先放 {a}，再放 {b}。最终盒子里只会留下最后一次放入的值。',
     q2_visual_arrow: '第二次赋值会覆盖第一次：{var} 先变成 {a}，再变成 {b}',
     q2_reteach_title: '赋值=覆盖盒子里的内容（按顺序执行）',
-    q2_reteach_text: '程序从上到下执行。每次赋值都会把"左边 variable 当前的值"替换成右边的新值（last assignment wins）。',
-    q2_reteach_analogy: '像白板上写数字：先写 {a}，后面再写 {b}，最后看到的是 {b}。',
+    q2_reteach_text: '程序从上到下执行。每次赋值都会把"左边变量当前的值"替换成右边的新值（最后一次赋值生效）。',
+    q2_reteach_analogy: '像白板上写数字：先写 {a}，后面再写 {b}，最后看到的是 {b}。\n\n也可以这样想：变量盒子像是一个可以换卡片的盒子，每次赋值就是换一张新卡片，旧的卡片会被扔掉。',
     q2_reteach_hint: '抓住关键：最终值由"最后一次对它赋值的语句"决定。',
     
     // Questions - Level 3
@@ -347,8 +350,8 @@ ELSE
     q3_feedback_track: '一步一步：先 x=初值，再把 x 的值复制到 y，最后 x 被改成新值。y 不会被最后一句影响。',
     q3_visual_arrow: '关键：y ← x 是"复制 x 当下的值 {x0} 到 y"。之后 x 变成 {x1}，y 仍是 {x0}',
     q3_reteach_title: 'y ← x：复制"此刻的值"，不是建立"绑定关系"',
-    q3_reteach_text: '把右边这个 variable 里"当前看到的数字"复制一份，写进左边的 variable。复制完成后，这两个 variable 互不影响。',
-    q3_reteach_analogy: '像抄作业：你把 x 现在写的数字抄到 y 的纸上。之后 x 改了，不会自动改你的 y 那张纸。',
+    q3_reteach_text: '把右边这个变量里"当前看到的数字"复制一份，写进左边的变量。复制完成后，这两个变量互不影响。',
+    q3_reteach_analogy: '像抄作业：你把 x 现在写的数字抄到 y 的纸上。之后 x 改了，不会自动改你的 y 那张纸。\n\n也可以这样想：x 和 y 是两个独立的盒子。y ← x 只是把 x 盒子里的卡片"复印"一份放进 y 盒子。之后给 x 换卡片，y 盒子里的卡片不会自动跟着变。',
     q3_reteach_hint: '先回答：执行到 y ← x 那一行时，x 是多少？那就是 y 的最终值（除非后面又给 y 赋值）。',
     
     // Questions - Level 4
@@ -364,7 +367,7 @@ ELSE
     q4_visual_arrow: 'temp 先"保管"旧的 x={x0}，避免被 x ← y 覆盖丢失；最后 y 从 temp 取回',
     q4_reteach_title: '为什么需要 temp：避免"覆盖丢值"',
     q4_reteach_text: '赋值会覆盖。若直接 x ← y，再做 y ← x，你会把旧 x 覆盖掉，导致两边都变成同一个值。temp 用来暂存旧值。',
-    q4_reteach_analogy: '像交换两杯水：需要一个空杯子临时倒一下，否则先倒的一杯会把另一杯覆盖混掉。',
+    q4_reteach_analogy: '像交换两杯水：需要一个空杯子临时倒一下，否则先倒的一杯会把另一杯覆盖混掉。\n\n也可以这样想：x 和 y 是两个盒子，temp 是第三个"临时保管盒"。交换时，先把 x 的卡片放到 temp 保管，再把 y 的卡片放到 x，最后把 temp 保管的卡片放到 y。',
     q4_reteach_hint: '先问自己：执行完第一句 temp ← x 后，temp 里是什么？接着 x 改成什么？最后 y 从哪里拿？',
     
     // Teaching text
@@ -631,6 +634,9 @@ ELSE
     box_all_done_title: '✅ You have completed all box scenarios!',
     box_all_done_text: 'Now you can freely change your predictions and re-run the box model, or go back to the question panel and apply the same mental model to harder variable problems.',
     box_progress_title: 'Progress',
+    box_complete_title: '✅ You have built a basic box-model understanding of variables',
+    box_complete_text: 'You have finished 5 core box-model scenarios: copying, independent boxes, increment, chain copying, and boolean comparison. Next we will use questions on the left to check whether you can really track variable changes with this model.',
+    box_complete_next: 'Enter next section →',
     box_drag_ops_title: 'Operations',
     box_drag_mode_title: 'Mode',
     box_drag_mode_guided: 'Guided',
@@ -707,7 +713,7 @@ ELSE
     q1_feedback_name: 'It looks like you didn\'t provide a number. The question asks for "the value of this variable".',
     q1_reteach_title: 'Core Model: A variable is a "named storage location"',
     q1_reteach_text: 'The assignment statement x ← 5 means: write 5 into the variable named x. Whatever was there before (even empty) will be overwritten to 5.',
-    q1_reteach_analogy: 'Like putting a card with "5" into a drawer labeled "x". After putting it in, the value of this variable is 5.',
+    q1_reteach_analogy: 'Like putting a card with "5" into a drawer labeled "x". After putting it in, the value of this variable is 5.\n\nYou can also think of it this way: a variable is like a box with a name, and assignment is putting a number card into the box.',
     q1_reteach_hint: 'Just answer: "What number is in this variable after the assignment?"',
     q1_visual_arrow: 'Copy the value {value} on the right into the variable on the left: {var}',
     
@@ -720,7 +726,7 @@ ELSE
     q2_visual_arrow: 'The second assignment overwrites the first: {var} first becomes {a}, then becomes {b}',
     q2_reteach_title: 'Assignment = Overwriting the content in the box (executed in order)',
     q2_reteach_text: 'The program executes from top to bottom. Each assignment replaces "the current value of the variable on the left" with the new value on the right (last assignment wins).',
-    q2_reteach_analogy: 'Like writing numbers on a whiteboard: first write {a}, then write {b} later, what you see at the end is {b}.',
+    q2_reteach_analogy: 'Like writing numbers on a whiteboard: first write {a}, then write {b} later, what you see at the end is {b}.\n\nYou can also think of it this way: a variable box is like a box where you can swap cards. Each assignment replaces the old card with a new one, and the old card is discarded.',
     q2_reteach_hint: 'Key point: The final value is determined by "the last statement that assigns to it".',
     
     // Questions - Level 3
@@ -736,7 +742,7 @@ ELSE
     q3_visual_arrow: 'Key: y ← x copies "the current value of x, {x0}, to y". After x becomes {x1}, y remains {x0}',
     q3_reteach_title: 'y ← x: Copy "the value at this moment", not establish "a binding relationship"',
     q3_reteach_text: 'Copy the "currently visible number" in the variable on the right, and write it into the variable on the left. After copying, these two variables do not affect each other.',
-    q3_reteach_analogy: 'Like copying homework: you copy the number x currently has to y\'s paper. After x changes, it won\'t automatically change your y paper.',
+    q3_reteach_analogy: 'Like copying homework: you copy the number x currently has to y\'s paper. After x changes, it won\'t automatically change your y paper.\n\nYou can also think of it this way: x and y are two independent boxes. y ← x just "photocopies" the card in x\'s box and puts it into y\'s box. After you change the card in x\'s box, the card in y\'s box won\'t automatically change.',
     q3_reteach_hint: 'First answer: when executing the line y ← x, what is x? That is y\'s final value (unless y is assigned again later).',
     
     // Questions - Level 4
@@ -752,7 +758,7 @@ ELSE
     q4_visual_arrow: 'temp first "keeps" the old x={x0}, avoiding being overwritten and lost by x ← y; finally y retrieves from temp',
     q4_reteach_title: 'Why temp is needed: Avoid "overwrite value loss"',
     q4_reteach_text: 'Assignment overwrites. If you directly do x ← y, then y ← x, you will overwrite the old x, causing both sides to become the same value. temp is used to temporarily store the old value.',
-    q4_reteach_analogy: 'Like swapping two cups of water: you need an empty cup to temporarily pour, otherwise the first cup poured will mix and overwrite the other.',
+    q4_reteach_analogy: 'Like swapping two cups of water: you need an empty cup to temporarily pour, otherwise the first cup poured will mix and overwrite the other.\n\nYou can also think of it this way: x and y are two boxes, and temp is a third "temporary storage box". When swapping, first put x\'s card into temp for safekeeping, then put y\'s card into x, and finally put the card from temp into y.',
     q4_reteach_hint: 'First ask yourself: after executing the first statement temp ← x, what is in temp? Then what does x change to? Finally, where does y get it from?',
     
     // Teaching text
