@@ -94,9 +94,12 @@ ELSE
     skip_q3_opt_D: 'D. count = 0, sum = 24, result = -1',
     
     // Home
-    homeTitle: 'CSP Super Tutor',
-    homeSubtitle: 'Variables & Assignment（变量与赋值）Interactive Practice',
+    homeTitle: '变量 & 赋值 可视化练习',
+    homeSubtitle: 'CSP Super Tutor',
     homeDesc: '你将在可视化模型的帮助下，练习关键知识点：',
+    home_kw_assignment_overwrites: '赋值覆盖',
+    home_kw_copy_by_value: '值拷贝',
+    home_kw_temporary_variable: '临时变量',
     start: 'START',
     
     // TeachingLoop
@@ -160,9 +163,10 @@ ELSE
     executionReading: '正在读取变量值...',
     executionCalculating: '正在计算...',
     executionStoring: '正在存储结果...',
-    typePanelTitle: 'AP 变量类型 与 可存储空间',
-    typeDemoTitle: '变量类型与存储空间演示',
-    typeDemoSubtitle: '了解不同类型的变量如何占用不同的存储空间',
+    // 类型/存储空间只作为背景补充，不在标题上强调
+    typePanelTitle: 'AP 变量类型（补充）',
+    typeDemoTitle: '变量与赋值 · 类型补充',
+    typeDemoSubtitle: '补充资料：不同类型的变量占用空间不同（可快速浏览/跳过）',
     demoTypeStep1Title: 'int 类型（整数）',
     demoTypeStep1Desc: 'int 类型占用 4 个字节的存储空间，可以存储整数，例如：42。适合存储考试分数、计数器等整数值。',
     demoTypeStep2Title: 'double 类型（小数）',
@@ -370,6 +374,107 @@ ELSE
     q4_reteach_analogy: '像交换两杯水：需要一个空杯子临时倒一下，否则先倒的一杯会把另一杯覆盖混掉。\n\n也可以这样想：x 和 y 是两个盒子，temp 是第三个"临时保管盒"。交换时，先把 x 的卡片放到 temp 保管，再把 y 的卡片放到 x，最后把 temp 保管的卡片放到 y。',
     q4_reteach_hint: '先问自己：执行完第一句 temp ← x 后，temp 里是什么？接着 x 改成什么？最后 y 从哪里拿？',
     
+    // Q1-Q20 每道题目的专属"提示与修正"（根据题目 ID 匹配）
+    q1_reteach_title: '',
+    q1_reteach_text: '你可能把 x ← 10 当成“在判断 x 是否等于 10”。\n你刚才选用了像 x == 10 或 10 = x 这样的写法，实际上没有把 10 放进 x。\n这个想法行不通，因为判断只是在“问一个问题”，不会改变盒子里的卡片；而 10 = x 也不是把卡片放进盒子的方向。\n正确的心智模型是：变量是贴着名字的盒子，← 是“把右边这张卡片放进左边那只盒子”。\n现在你再自问一次：执行完这一句后，x 盒子里是不是应该只剩下一张写着 10 的卡片？',
+    q1_reteach_analogy: '',
+    q1_reteach_hint: '',
+    
+    q2_reteach_title: '',
+    q2_reteach_text: '你可能觉得变量像一个“列表”，可以同时记住很多个值。\n你刚才把“变量能同时存多个值”当成了正确结论。\n这个想法行不通，因为变量更像只有一个格子的盒子：同一时刻只能放一张卡片，新卡片会把旧卡片顶掉。\n正确的心智模型是：变量=单格盒子；赋值=换卡片；历史不会自动保留。\n那你反过来想想：如果我再给同一个变量赋一个新值，旧值会躲到哪里去呢？',
+    q2_reteach_analogy: '',
+    q2_reteach_hint: '',
+    
+    q3_reteach_title: '',
+    q3_reteach_text: '你可能在脑中“记住了第一行”，以为第一次赋值就是最终答案。\n你刚才把 x 的最终值当成了第一行赋进去的那个值。\n这个想法行不通，因为程序是按顺序执行的，后面的赋值会直接覆盖 x 盒子里原来的卡片。\n正确的心智模型是：看每一行都像“对盒子写入一次”，最后一次写入决定最后看到的卡片。\n你愿意自问一下：当第二行执行完，x 盒子里还可能同时存在两张卡片吗？',
+    q3_reteach_analogy: '',
+    q3_reteach_hint: '',
+    
+    q4_reteach_title: '',
+    q4_reteach_text: '你可能把 x ← x + 1 当成“数学等式”，觉得左边和右边必须同时成立。\n你刚才在理解时把 x 当成同一时刻既是旧值又是新值，导致结果跟不上。\n这个想法行不通，因为计算时会先从 x 盒子里把旧卡片读出来，再算出新数字，最后才把新卡片放回 x 盒子。\n正确的心智模型是：赋值=“读 → 算 → 写回”，盒子里永远只保留写回后的那张卡片。\n那你自检一下：在执行右边 x + 1 的那一刻，x 盒子里拿出来的还是旧卡片还是新卡片？',
+    q4_reteach_analogy: '',
+    q4_reteach_hint: '',
+    
+    q5_reteach_title: '',
+    q5_reteach_text: '你可能以为 y 会“跟着 x 变”，像两只盒子连着一根绳子。\n你刚才把后面 x 改成 10 的变化也算进了 y 的结果里。\n这个想法行不通，因为 y ← x + 1 只在那一行执行一次：它把当时算出来的数字放进 y，之后再改 x 并不会回头重算 y。\n正确的心智模型是：每次赋值都是“把结果卡片放进目标盒子”，放进去就定住，除非后面又给 y 赋值。\n你现在反问自己：执行 y 那一行时，x 当时是多少？那不就决定了 y 里放进去的卡片吗？',
+    q5_reteach_analogy: '',
+    q5_reteach_hint: '',
+    
+    q6_reteach_title: '',
+    q6_reteach_text: '你可能以为变量可以把“6 + 2”原封不动地存进去，像存一段文字。\n你刚才把表达式当成了变量里会保存的内容。\n这个想法行不通，因为赋值存的是“算出来的结果卡片”，不是“算式本身”。\n正确的心智模型是：CPU 先把右边算成一个具体数字，再把这个数字放进 total 盒子。\n你自问一下：如果盒子里真的放的是“6 + 2”，那 total 还能拿来做下一步计算吗？',
+    q6_reteach_analogy: '',
+    q6_reteach_hint: '',
+    
+    q7_reteach_title: '',
+    q7_reteach_text: '你可能把 y ← x 想成“让 y 和 x 绑定在一起”，以后 x 变了 y 也会变。\n你刚才把 y 的最终值跟着后面 x 的新值一起更新了。\n这个想法行不通，因为 y ← x 做的是“复制当下的卡片”：把 x 盒子里那张卡片复印一份放进 y，之后两只盒子互不影响。\n正确的心智模型是：赋值是复制值，不是复制一条“连接线”。\n你愿意再问自己一次：y 被赋值那一刻，x 盒子里放着的那张卡片到底写着几？',
+    q7_reteach_analogy: '',
+    q7_reteach_hint: '',
+    
+    q8_reteach_title: '',
+    q8_reteach_text: '你可能把 == 当成了“把值放进去”的箭头，以为写上就会更新变量。\n你刚才没有把 x == 5 识别成错误行（或者把它当成赋值语句）。\n这个想法行不通，因为 == 只是在比较两个东西是否相等，它不会把任何卡片放进 x 盒子里。\n正确的心智模型是：← 才是“往盒子里放卡片”，== 只是“问一句：这两张卡片一样吗？”。\n你自检一下：哪一行真的会改变某个盒子里的内容，而不是只做判断？',
+    q8_reteach_analogy: '',
+    q8_reteach_hint: '',
+    
+    q9_reteach_title: '',
+    q9_reteach_text: '你可能以为写出 lives - 1 就等于“把 lives 减一”，变量会自动更新。\n你刚才选择了只计算、不写回的做法（或用 == 当成更新）。\n这个想法行不通，因为计算只是在桌面上算出一个新数字，除非你把新卡片放回 lives 盒子里，盒子里的旧卡片不会变。\n正确的心智模型是：更新变量=先算出新值，再用 ← 把新值写回同一个变量盒子。\n你反问自己：你算出来的新数字，有没有真的被放进 lives 盒子里？',
+    q9_reteach_analogy: '',
+    q9_reteach_hint: '',
+    
+    q10_reteach_title: '',
+    q10_reteach_text: '你可能把 x ← x * 3 当成“同时发生”的变化，没先把旧 x 拿出来用。\n你刚才在计算时没有牢牢抓住 x 的旧值，导致结果跑偏。\n这个想法行不通，因为右边的 x * 3 一定是用“赋值前”的 x 卡片来算，算完才会用新卡片覆盖 x。\n正确的心智模型是：赋值=读旧卡片 → 算出新卡片 → 覆盖回盒子。\n你自问一下：在右边开始计算时，x 盒子里那张“旧卡片”写着几？',
+    q10_reteach_analogy: '',
+    q10_reteach_hint: '',
+    
+    q11_reteach_title: '',
+    q11_reteach_text: '你可能觉得变量就算还没赋值，也能“先拿来用用看”。\n你刚才把“变量必须先有值才能使用”当成了不正确。\n这个想法行不通，因为用变量就像从盒子里取卡片：盒子是空的，你就取不到数字去计算。\n正确的心智模型是：先用 ← 给变量放一张卡片，之后才能在表达式里读它。\n你反过来问自己：如果盒子里什么都没有，你打算把哪个数字拿出来参与运算？',
+    q11_reteach_analogy: '',
+    q11_reteach_hint: '',
+    
+    q12_reteach_title: '',
+    q12_reteach_text: '你可能以为 y 改成 12 以后，x 也会被“连带改掉”。\n你刚才把 y ← 12 的效果误算到了 x 上。\n这个想法行不通，因为赋值只会改“左边那只盒子”：y 盒子换卡片，并不会伸手去动 x 盒子。\n正确的心智模型是：每个变量都是独立盒子，哪只盒子被写入，哪只盒子才会变。\n你自检一下：这三行里，哪一行曾经把新卡片放进 x 盒子？',
+    q12_reteach_analogy: '',
+    q12_reteach_hint: '',
+    
+    q13_reteach_title: '',
+    q13_reteach_text: '你可能在心里把多行更新“合并成一次”，没有逐行跟踪 count 的变化。\n你刚才没有把每一次 count ← count + 1 都算进去。\n这个想法行不通，因为每一行都会立刻覆盖 count 盒子里的卡片；少跟踪一行，就少加一次。\n正确的心智模型是：像走台阶一样，一行一行写下“此刻 count 盒子里是哪张卡片”。\n你愿意反问自己：如果我让你写出每一行执行后的 count，你还能一步不漏吗？',
+    q13_reteach_analogy: '',
+    q13_reteach_hint: '',
+    
+    q14_reteach_title: '',
+    q14_reteach_text: '你可能以为写出 score + 5 就等于“让 score 变大”，变量会自己更新。\n你刚才选择了只算不写回（或用 == 当成更新）。\n这个想法行不通，因为算出来的新数字不会自动跑进 score 盒子；不写回，盒子里还是旧卡片。\n正确的心智模型是：更新=先用旧 score 算出新值，再用 score ← (新值) 覆盖回 score 盒子。\n你自检一下：你算出来的结果，有没有真正通过 ← 放回 score？',
+    q14_reteach_analogy: '',
+    q14_reteach_hint: '',
+    
+    q15_reteach_title: '',
+    q15_reteach_text: '你可能把 five 当成“就是数字 5”，觉得计算时能自动明白你的意思。\n你刚才让 total 去加上 five，但 five 这个名字并没有被赋值过。\n这个想法行不通，因为对程序来说，five 是一个变量名——也就是一只盒子；如果这只盒子从没放过卡片，就没有数字可取。\n正确的心智模型是：任何出现在表达式里的名字，都必须先“创建并放值”，否则就是空盒子。\n你反问自己：在这段代码里，five 这只盒子到底在第几行被放进过卡片？',
+    q15_reteach_analogy: '',
+    q15_reteach_hint: '',
+    
+    q16_reteach_title: '',
+    q16_reteach_text: '你可能以为 timer - 1 写出来就会让 timer 自动减少。\n你刚才用了只计算、不写回的形式（或把 == 当成更新）。\n这个想法行不通，因为倒计时的“变化”必须体现在 timer 盒子里卡片被替换；否则每秒看到的还是同一张旧卡片。\n正确的心智模型是：每一次减少都要把新值写回 timer：timer ← timer - 1。\n你自检一下：每秒过后，timer 盒子里的卡片有没有真的被换成更小的数字？',
+    q16_reteach_analogy: '',
+    q16_reteach_hint: '',
+    
+    q17_reteach_title: '',
+    q17_reteach_text: '你可能以为 c 会“持续跟着 a 变”，因为 c 是用 a 算出来的。\n你刚才把 a 后来改成 10 的变化也算进了 c 的结果。\n这个想法行不通，因为 c ← a + b 只在那一刻读 a 和 b 的卡片、算出一个结果卡片放进 c；之后再改 a，不会回头重算 c。\n正确的心智模型是：c 盒子里装的是“当时算出来的结果卡片”，不是一条会自动更新的连接。\n你反问自己：c 被赋值的那一行执行时，a 和 b 盒子里各是哪张卡片？',
+    q17_reteach_analogy: '',
+    q17_reteach_hint: '',
+    
+    q18_reteach_title: '',
+    q18_reteach_text: '你可能把变量想成“一个固定数字”或“一个数学式子”，而不是一个能装东西的容器。\n你刚才没有选择“变量是存储值的容器”这个描述。\n这个想法行不通，因为程序需要把会变化的数据暂存下来再使用：没有“盒子”，数据就无处可放、也无法被更新。\n正确的心智模型是：变量=贴名字的盒子，可以反复换卡片；名字只是标签，不是值本身。\n你自问一下：如果一个值会在运行过程中变化，你打算把它放在哪里，才能下一步继续用？',
+    q18_reteach_analogy: '',
+    q18_reteach_hint: '',
+    
+    q19_reteach_title: '',
+    q19_reteach_text: '你可能在心里没先“取出旧 score”，直接跳到了结果。\n你刚才在计算 score 的新值时没有严格按执行顺序“读 → 算 → 写”。\n这个想法行不通，因为右边的 score * 2 一定用的是赋值前的 score 卡片；算完才会把新卡片放回 score。\n正确的心智模型是：变量更新就像换卡片：先看旧卡片写着什么，再算新卡片，最后覆盖回盒子。\n你自检一下：在右边开始计算那一刻，score 盒子里那张旧卡片写着几？',
+    q19_reteach_analogy: '',
+    q19_reteach_hint: '',
+    
+    q20_reteach_title: '',
+    q20_reteach_text: '你可能觉得“只要出现数字就需要变量”，而忽略了“会不会变化”。\n你刚才没有选出“存储玩家不断变化的分数”这种场景。\n这个想法行不通，因为变量的价值在于“能更新”：如果一个值永远不变，直接写死就行；用盒子反而多一步。\n正确的心智模型是：变量=给会变化的东西准备的盒子（比如分数、生命值、计数器）。\n你反问自己：这个场景里的那个值，会不会在程序运行过程中改变？',
+    q20_reteach_analogy: '',
+    q20_reteach_hint: '',
+    
     // Teaching text
     teaching_base: '看左侧可视化：左边是"赋值前"，右边是"赋值后"。箭头说明：把右边的值复制进左边变量盒子。',
     teaching_l1: '本题只需要读懂：x ← 5 就是"x 盒子里变成 5"。',
@@ -480,9 +585,12 @@ ELSE
     skip_q3_opt_D: 'D. count = 0, sum = 24, result = -1',
     
     // Home
-    homeTitle: 'CSP Super Tutor',
-    homeSubtitle: 'Variables & Assignment Interactive Practice',
+    homeTitle: 'Variables & Assignment Practice',
+    homeSubtitle: 'CSP Super Tutor',
     homeDesc: 'You will practice key concepts with the help of a visual model:',
+    home_kw_assignment_overwrites: 'Assignment overwrites',
+    home_kw_copy_by_value: 'Copy by value',
+    home_kw_temporary_variable: 'Temporary variable',
     start: 'START',
     
     // TeachingLoop
@@ -544,9 +652,10 @@ ELSE
     executionReading: 'Reading variable value...',
     executionCalculating: 'Calculating...',
     executionStoring: 'Storing result...',
-    typePanelTitle: 'AP Variable Types & Storage',
-    typeDemoTitle: 'Variable Types & Storage Demo',
-    typeDemoSubtitle: 'Learn how different variable types occupy different storage spaces',
+    // Types/storage are supporting background, not the main title
+    typePanelTitle: 'AP Variable Types (Optional)',
+    typeDemoTitle: 'Variables & Assignment · Types (Optional)',
+    typeDemoSubtitle: 'Background: different types use different memory sizes (quick skim / optional)',
     demoTypeStep1Title: 'int Type (Integer)',
     demoTypeStep1Desc: 'int type uses 4 bytes of storage space, can store whole numbers like 42. Good for exam scores, counters, and other integer values.',
     demoTypeStep2Title: 'double Type (Decimal)',
@@ -760,6 +869,107 @@ ELSE
     q4_reteach_text: 'Assignment overwrites. If you directly do x ← y, then y ← x, you will overwrite the old x, causing both sides to become the same value. temp is used to temporarily store the old value.',
     q4_reteach_analogy: 'Like swapping two cups of water: you need an empty cup to temporarily pour, otherwise the first cup poured will mix and overwrite the other.\n\nYou can also think of it this way: x and y are two boxes, and temp is a third "temporary storage box". When swapping, first put x\'s card into temp for safekeeping, then put y\'s card into x, and finally put the card from temp into y.',
     q4_reteach_hint: 'First ask yourself: after executing the first statement temp ← x, what is in temp? Then what does x change to? Finally, where does y get it from?',
+    
+    // Q1-Q20 Individual question reteach (matched by question ID)
+    q1_reteach_title: '',
+    q1_reteach_text: 'You might be thinking that x ← 10 is “checking whether x equals 10.”\nYou just chose something like x == 10 or 10 = x, which does not actually put 10 into x.\nThat doesn’t work because a check asks a question and never changes the card inside the box; and 10 = x isn’t even pointing the “put card into box” direction.\nA better mental model: a variable is a labeled box, and ← means “put the right-hand card into the left-hand box.”\nNow ask yourself: after this one line runs, should the x box contain only a single card that says 10?',
+    q1_reteach_analogy: '',
+    q1_reteach_hint: '',
+    
+    q2_reteach_title: '',
+    q2_reteach_text: 'You might be thinking a variable is like a list that can hold multiple values at the same time.\nYou just treated “a variable can store more than one value at once” as true.\nThat doesn’t work because a variable is more like a one-slot box: it can hold only one card, and a new card replaces the old one.\nA better mental model: variable = one-slot box; assignment = swap the card; history is not kept automatically.\nAsk yourself: if I assign a new value to the same variable, where would the old value go?',
+    q2_reteach_analogy: '',
+    q2_reteach_hint: '',
+    
+    q3_reteach_title: '',
+    q3_reteach_text: 'You might be “remembering the first line” and assuming the first assignment is the final answer.\nYou just treated x’s final value as the value from the first assignment.\nThat doesn’t work because the program runs in order, and a later assignment overwrites the card in the x box.\nA better mental model: each line is one write into the box; the last write decides the last card you see.\nAsk yourself: after the second line runs, can the x box still hold two cards at once?',
+    q3_reteach_analogy: '',
+    q3_reteach_hint: '',
+    
+    q4_reteach_title: '',
+    q4_reteach_text: 'You might be treating x ← x + 1 like a math equation that must be “true on both sides at the same time.”\nYou just tried to reason as if x is both the old value and the new value simultaneously.\nThat doesn’t work because execution is: read the old card from the x box, compute a new number, then replace the card in the x box.\nA better mental model: assignment = “read → compute → write back,” and the box keeps only the written-back card.\nAsk yourself: when the right side x + 1 is evaluated, does it use the old card or the new card from x?',
+    q4_reteach_analogy: '',
+    q4_reteach_hint: '',
+    
+    q5_reteach_title: '',
+    q5_reteach_text: 'You might be thinking y “follows x,” like the two boxes are tied together.\nYou just updated y using the later change to x (when x becomes 10).\nThat doesn’t work because y ← x + 1 happens once at that line: it puts the computed result into y, and later changes to x do not retroactively recompute y.\nA better mental model: each assignment puts a result card into the target box; it stays until that target is assigned again.\nAsk yourself: at the exact moment y is assigned, what is x right then?',
+    q5_reteach_analogy: '',
+    q5_reteach_hint: '',
+    
+    q6_reteach_title: '',
+    q6_reteach_text: 'You might be thinking a variable can store the expression “6 + 2” itself, like storing text.\nYou just treated the expression as what would be saved in total.\nThat doesn’t work because assignment stores the result card, not the formula.\nA better mental model: the CPU evaluates the right-hand expression into a single number, then puts that number into the total box.\nAsk yourself: if the box really stored “6 + 2,” could total be used as a normal number in the next calculation?',
+    q6_reteach_analogy: '',
+    q6_reteach_hint: '',
+    
+    q7_reteach_title: '',
+    q7_reteach_text: 'You might be treating y ← x as “binding y to x,” so y changes whenever x changes.\nYou just updated y to match x after x was changed later.\nThat doesn’t work because y ← x copies the current card: it photocopies the card inside x and puts the copy into y, and then the boxes are independent.\nA better mental model: assignment copies a value, not a live connection.\nAsk yourself: at the moment y was assigned, what card was inside the x box?',
+    q7_reteach_analogy: '',
+    q7_reteach_hint: '',
+    
+    q8_reteach_title: '',
+    q8_reteach_text: 'You might be treating == like the assignment arrow, as if writing it “updates” a variable.\nYou just didn’t identify x == 5 as the misunderstanding line (or you treated it like assignment).\nThat doesn’t work because == only compares; it never puts a card into the x box.\nA better mental model: ← changes boxes (store a card), while == asks a yes/no question (compare cards).\nAsk yourself: which line actually changes what’s inside a box, rather than just checking something?',
+    q8_reteach_analogy: '',
+    q8_reteach_hint: '',
+    
+    q9_reteach_title: '',
+    q9_reteach_text: 'You might be thinking writing lives - 1 automatically “decreases lives.”\nYou just chose an approach that computes but does not write back (or used == as if it updates).\nThat doesn’t work because computing a new number on paper doesn’t change the card in the lives box—only writing back replaces the card.\nA better mental model: updating a variable = compute the new value, then use ← to store it back into the same box.\nAsk yourself: did your new number ever get placed back into the lives box?',
+    q9_reteach_analogy: '',
+    q9_reteach_hint: '',
+    
+    q10_reteach_title: '',
+    q10_reteach_text: 'You might be skipping the “use the old x first” step and jumping straight to the result.\nYou just didn’t anchor the calculation on the old value already inside the x box.\nThat doesn’t work because x * 3 must use the pre-assignment card in x; only after computing do we overwrite x.\nA better mental model: assignment = read old card → compute new card → overwrite the box.\nAsk yourself: when the right side starts computing, what number is on the old card in x?',
+    q10_reteach_analogy: '',
+    q10_reteach_hint: '',
+    
+    q11_reteach_title: '',
+    q11_reteach_text: 'You might be thinking a variable can be used even before it has any value.\nYou just treated “a variable must have a value before it can be used” as false.\nThat doesn’t work because using a variable is like taking a card out of its box—if the box is empty, there is no number to compute with.\nA better mental model: first place a card using ←, then you can read that card in expressions.\nAsk yourself: if the box is empty, what number are you actually going to use?',
+    q11_reteach_analogy: '',
+    q11_reteach_hint: '',
+    
+    q12_reteach_title: '',
+    q12_reteach_text: 'You might be thinking changing y later also changes x somehow.\nYou just applied the effect of y ← 12 to the x box.\nThat doesn’t work because assignment only changes the left-hand box: y gets a new card, and x is untouched unless x is assigned.\nA better mental model: variables are independent boxes; only the box on the left of ← changes.\nAsk yourself: across these lines, which one ever writes a new card into the x box?',
+    q12_reteach_analogy: '',
+    q12_reteach_hint: '',
+    
+    q13_reteach_title: '',
+    q13_reteach_text: 'You might be “compressing multiple updates into one” instead of tracking count line by line.\nYou just didn’t apply every count ← count + 1 update.\nThat doesn’t work because each line immediately overwrites the card in the count box; miss one line and you miss one increment.\nA better mental model: after every line, pause and write down what card is currently inside count.\nAsk yourself: can you list count after each line without skipping any step?',
+    q13_reteach_analogy: '',
+    q13_reteach_hint: '',
+    
+    q14_reteach_title: '',
+    q14_reteach_text: 'You might be thinking writing score + 5 automatically “makes score bigger.”\nYou just chose a compute-without-write-back form (or used == as if it updates).\nThat doesn’t work because the new number won’t jump into the score box by itself; without ←, the box still holds the old card.\nA better mental model: update = compute using the old score card, then overwrite score by writing back with ←.\nAsk yourself: did your computed result ever get stored back into score?',
+    q14_reteach_analogy: '',
+    q14_reteach_hint: '',
+    
+    q15_reteach_title: '',
+    q15_reteach_text: 'You might be reading five as “the number 5,” assuming the computer will understand your intent.\nYou just asked total to add five, but the name five was never assigned a value.\nThat doesn’t work because to the program, five is a variable name (a box); if that box was never filled, there’s no card to read.\nA better mental model: every name used in an expression must have its own box with a value before it can be read.\nAsk yourself: in this code, on which line did the five box ever receive a card?',
+    q15_reteach_analogy: '',
+    q15_reteach_hint: '',
+    
+    q16_reteach_title: '',
+    q16_reteach_text: 'You might be thinking writing timer - 1 automatically decreases timer.\nYou just used a compute-without-write-back form (or used == as if it updates).\nThat doesn’t work because a countdown only changes if the card in the timer box is replaced; otherwise it’s the same old card every second.\nA better mental model: each tick must write back: timer ← timer - 1.\nAsk yourself: after each second, did the timer box actually get a smaller-number card?',
+    q16_reteach_analogy: '',
+    q16_reteach_hint: '',
+    
+    q17_reteach_title: '',
+    q17_reteach_text: 'You might be thinking c keeps “tracking” a, since c was computed using a.\nYou just carried the later change a ← 10 into c.\nThat doesn’t work because c ← a + b runs once: it reads the current a and b cards, computes one result card, and stores it into c; later changes to a don’t retroactively change c.\nA better mental model: c stores the result card from that moment, not a live link to a.\nAsk yourself: when c was assigned, what cards were inside a and b at that moment?',
+    q17_reteach_analogy: '',
+    q17_reteach_hint: '',
+    
+    q18_reteach_title: '',
+    q18_reteach_text: 'You might be thinking a variable is a fixed number or a math statement, not a container.\nYou just didn’t pick “a container that stores a value.”\nThat doesn’t work because programs need a place to store changing data; without a “box,” values can’t be updated and reused.\nA better mental model: a variable is a labeled box that can swap cards; the name is just the label, not the value.\nAsk yourself: if a value changes while the program runs, where will you keep it so you can use it again?',
+    q18_reteach_analogy: '',
+    q18_reteach_hint: '',
+    
+    q19_reteach_title: '',
+    q19_reteach_text: 'You might be skipping the step of “taking out the old score first” and jumping to the result.\nYou just didn’t follow the execution order of read → compute → write for score.\nThat doesn’t work because score * 2 must use the pre-assignment card in score; only after computing do we overwrite score.\nA better mental model: updating a variable is swapping the card: read the old card, compute a new card, then replace the box.\nAsk yourself: at the moment the right side starts computing, what number is on the old card in score?',
+    q19_reteach_analogy: '',
+    q19_reteach_hint: '',
+    
+    q20_reteach_title: '',
+    q20_reteach_text: 'You might be thinking “any time there is a number, you need a variable,” instead of focusing on change.\nYou just didn’t choose the scenario where a player’s score keeps changing.\nThat doesn’t work because the value of a variable is that it can be updated; for a value that never changes, writing it directly is simpler.\nA better mental model: variables are boxes for values that change over time (score, lives, counters).\nAsk yourself: in this scenario, does the value change while the program runs?',
+    q20_reteach_analogy: '',
+    q20_reteach_hint: '',
     
     // Teaching text
     teaching_base: 'Look at the visualization on the left: the left is "before assignment", the right is "after assignment". The arrow shows: copy the value on the right into the variable box on the left.',

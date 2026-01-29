@@ -11,11 +11,11 @@ export default function Home({ onStart }) {
 
         <div className="home__desc">
           {t('homeDesc')}
-          <span className="home__kw">Assignment overwrites</span>
+          <span className="home__kw">{t('home_kw_assignment_overwrites')}</span>
           <span className="home__sep">/</span>
-          <span className="home__kw">Copy by value</span>
+          <span className="home__kw">{t('home_kw_copy_by_value')}</span>
           <span className="home__sep">/</span>
-          <span className="home__kw">Temporary variable for swap</span>
+          <span className="home__kw">{t('home_kw_temporary_variable')}</span>
         </div>
 
         <div className="home__actions">

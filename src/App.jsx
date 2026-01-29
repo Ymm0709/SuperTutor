@@ -151,12 +151,13 @@ export default function App() {
       let streak = prev.streak + 1
       let mode = '学习'
 
+      // 升级逻辑：连续答对2题后升级，但streak继续累积（不从0开始）
       if (level === 1 && streak >= 2) {
         level = 2
-        streak = 0
+        // streak 继续累积，不重置
       } else if (level === 2 && streak >= 2) {
         level = 3
-        streak = 0
+        // streak 继续累积，不重置
       }
 
       // 记录已做过的题目ID（如果题目有id字段，且未记录过）
@@ -482,6 +483,31 @@ export default function App() {
             />
           )}
         </main>
+      )}
+
+      {/* 页码提示：共 2 个学习页面（不包含首页） */}
+      {view !== 'home' && (
+        <div
+          className="page-dots"
+          aria-label={
+            language === 'zh'
+              ? (boxTrainerDone ? '第 2 / 2 页' : '第 1 / 2 页')
+              : (boxTrainerDone ? 'Page 2 / 2' : 'Page 1 / 2')
+          }
+        >
+          <button
+            type="button"
+            className={`page-dots__dot ${!boxTrainerDone ? 'page-dots__dot--active' : 'page-dots__dot--completed'}`}
+            data-tooltip={language === 'zh' ? 'P1：盒子模型训练' : 'Part 1: Box Model Trainer'}
+            aria-label={language === 'zh' ? 'P1：盒子模型训练' : 'Part 1: Box Model Trainer'}
+          />
+          <button
+            type="button"
+            className={`page-dots__dot ${boxTrainerDone ? 'page-dots__dot--active' : ''}`}
+            data-tooltip={language === 'zh' ? 'P2：做题 + 拖拽工坊' : 'Part 2: Questions + Drag Lab'}
+            aria-label={language === 'zh' ? 'P2：做题 + 拖拽工坊' : 'Part 2: Questions + Drag Lab'}
+          />
+        </div>
       )}
 
       {skipOpen && (

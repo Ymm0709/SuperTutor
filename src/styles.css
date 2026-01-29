@@ -91,6 +91,100 @@ html {
   overflow-x: hidden;
   padding-bottom: 40px;
 }
+
+/* 两页指示器（底部两个圆点） */
+.page-dots{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  top: auto;
+  left: auto;
+  transform: none;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 18, 34, 0.55);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+  transition: transform 90ms ease, box-shadow 90ms ease, border-color 90ms ease, background 90ms ease;
+}
+
+.page-dots:hover{
+  transform: translateY(-2px);
+  border-color: rgba(106, 168, 255, 0.25);
+  background: rgba(10, 18, 34, 0.62);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.35), 0 0 0 6px rgba(106, 168, 255, 0.10);
+}
+
+.page-dots__dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.10);
+  transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease, border-color 80ms ease;
+  cursor: default;
+  padding: 0;
+  outline: none;
+  appearance: none;
+}
+
+.page-dots__dot:hover{
+  transform: translateY(-1px) scale(1.08);
+  box-shadow: 0 0 0 6px rgba(106, 168, 255, 0.12);
+}
+
+/* 自定义 tooltip（替代原生 title，可控速度） */
+.page-dots__dot::after{
+  content: attr(data-tooltip);
+  position: absolute;
+  right: calc(100% + 10px);
+  bottom: 50%;
+  transform: translateY(50%) translateX(4px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(233, 238, 252, 0.98);
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(10, 18, 34, 0.92);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.40);
+  backdrop-filter: blur(10px);
+  transition: opacity 60ms ease, transform 60ms ease;
+  z-index: 30;
+}
+
+.page-dots__dot:hover::after,
+.page-dots__dot:focus-visible::after{
+  opacity: 1;
+  transform: translateY(50%) translateX(0);
+}
+
+.page-dots__dot{
+  position: relative;
+}
+
+.page-dots__dot:focus-visible{
+  box-shadow: 0 0 0 6px rgba(106, 168, 255, 0.12);
+}
+
+.page-dots__dot--active{
+  border-color: rgba(106, 168, 255, 0.75);
+  background: rgba(106, 168, 255, 0.75);
+  box-shadow: 0 0 0 4px rgba(106, 168, 255, 0.14);
+}
+
+.page-dots__dot--completed{
+  border-color: rgba(106, 168, 255, 0.75);
+  background: rgba(106, 168, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(106, 168, 255, 0.10);
+}
 .layout--single{
   grid-template-columns: 1fr;
   max-width: 980px;

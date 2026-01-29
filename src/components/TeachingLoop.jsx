@@ -317,7 +317,19 @@ export default function TeachingLoop({
             : state.mode === 'retest'
             ? (() => {
                 const reteach = getReteachForMisconception(state.lastMisconception, question, t)
-                return `${state.lastFeedback ? `${t('youMayBeStuckOn')}${state.lastFeedback}\n\n` : ''}${reteach.title}\n\n${reteach.text}\n\n${t('keyIdea')}: ${reteach.hint}\n\n${t('hintLabel')}: ${reteach.hint}\n\n${t('analogy')}:\n${reteach.analogy}`
+                const parts = []
+
+                // 1. 先点出可能的卡点
+                if (state.lastFeedback) {
+                  parts.push(`${t('youMayBeStuckOn')}${state.lastFeedback}`)
+                }
+
+                // 只展示一段“提示与修正”文本（不展示 Hint / Analogy / Key idea）
+                parts.push(reteach.text)
+
+                const fullText = parts.join('\n\n')
+                const varNames = extractVarNamesFromQuestion(question)
+                return renderHighlightedText(fullText, varNames)
               })()
             : getTeachingText(question, t)
           }
@@ -335,95 +347,49 @@ function getTeachingText(question, t) {
   return `${base} ${t('teaching_l4')}`
 }
 
-// 根据 misconception 文字匹配对应的 reteach key
-function getReteachKeyFromMisconception(misconceptionText, t) {
-  if (!misconceptionText) return null
-  
-  // 创建映射：翻译后的 misconception 文字 -> reteach key
-  // 需要同时匹配中英文
-  const misconceptionToReteachKey = {
-    // 中文
-    [t('q1_misconception_equals')]: 'q1',
-    [t('q1_misconception_name')]: 'q1',
-    [t('q2_misconception_ignore')]: 'q2',
-    [t('q2_misconception_order')]: 'q2',
-    [t('q3_misconception_format')]: 'q3',
-    [t('q3_misconception_binding')]: 'q3',
-    [t('q3_misconception_track')]: 'q3',
-    [t('q4_misconception_temp')]: 'q4',
-    [t('q4_misconception_swap')]: 'q4',
-    // 英文（如果语言切换后）
-    'Treating assignment as equals/comparison': 'q1',
-    'Treating variable as a name instead of a box': 'q1',
-    'Ignoring overwrite/thinking first assignment is permanent': 'q2',
-    'Unstable execution order tracking': 'q2',
-    'Format error': 'q3',
-    'Thinking y follows x changes (treating copy as binding/reference)': 'q3',
-    'Unstable execution tracking': 'q3',
-    'Ignoring temporary variable/overwrite causes value loss': 'q4',
-    'Unstable swap tracking': 'q4',
-  }
-  
-  return misconceptionToReteachKey[misconceptionText] || null
-}
-
-// 根据 misconception 获取针对性的 reteach 内容
+// 根据题目 ID 获取针对性的 reteach 内容
 function getReteachForMisconception(misconceptionText, question, t) {
-  const reteachKey = getReteachKeyFromMisconception(misconceptionText, t)
-  
-  if (reteachKey === 'q1') {
-    return {
-      title: t('q1_reteach_title'),
-      text: t('q1_reteach_text'),
-      analogy: t('q1_reteach_analogy'),
-      hint: t('q1_reteach_hint'),
-    }
-  } else if (reteachKey === 'q2') {
-    // Q2 的 analogy 需要参数，但这里我们没有具体值，使用通用版本
-    const analogyText = t('q2_reteach_analogy', { a: '第一个值', b: '第二个值' })
-    return {
-      title: t('q2_reteach_title'),
-      text: t('q2_reteach_text'),
-      analogy: analogyText.replace('第一个值', '第一个数').replace('第二个值', '第二个数'),
-      hint: t('q2_reteach_hint'),
-    }
-  } else if (reteachKey === 'q3') {
-    return {
-      title: t('q3_reteach_title'),
-      text: t('q3_reteach_text'),
-      analogy: t('q3_reteach_analogy'),
-      hint: t('q3_reteach_hint'),
-    }
-  } else if (reteachKey === 'q4') {
-    return {
-      title: t('q4_reteach_title'),
-      text: t('q4_reteach_text'),
-      analogy: t('q4_reteach_analogy'),
-      hint: t('q4_reteach_hint'),
+  // 优先根据题目 ID 匹配（Q1-Q20）
+  if (question && question.id) {
+    const questionId = question.id.toUpperCase() // Q1, Q2, Q3... Q20
+    const reteachKey = `${questionId.toLowerCase()}_reteach`
+    
+    const textKey = `${reteachKey}_text`
+    const text = t(textKey)
+    
+    // 只要该题目的专属 text 存在，就使用它（当前页面只展示 text）
+    // 注意：t() 可能会把空字符串当作 falsy 回退到 key，所以这里不要依赖 title/analogy/hint
+    if (text && text !== textKey) {
+      return {
+        text,
+        title: '',
+        analogy: '',
+        hint: '',
+      }
     }
   }
   
-  // 如果没有匹配到，使用题目的默认 reteach（如果有）
-  if (question.reteach) {
+  // 如果没有找到专属 reteach，使用题目的默认 reteach（如果有）
+  if (question && question.reteach) {
     return question.reteach
   }
   
-  // 最后回退到根据 level 的通用内容
-  if (question.level === 1) {
+  // 最后回退到根据 level 的通用内容（向后兼容）
+  if (question && question.level === 1) {
     return {
       title: t('q1_reteach_title'),
       text: t('q1_reteach_text'),
       analogy: t('q1_reteach_analogy'),
       hint: t('q1_reteach_hint'),
     }
-  } else if (question.level === 2) {
+  } else if (question && question.level === 2) {
     return {
       title: t('q2_reteach_title'),
       text: t('q2_reteach_text'),
       analogy: t('q2_reteach_analogy', { a: '第一个数', b: '第二个数' }),
       hint: t('q2_reteach_hint'),
     }
-  } else if (question.level === 3) {
+  } else if (question && question.level === 3) {
     return {
       title: t('q3_reteach_title'),
       text: t('q3_reteach_text'),
@@ -432,6 +398,7 @@ function getReteachForMisconception(misconceptionText, question, t) {
     }
   }
   
+  // 默认返回
   return {
     title: t('q4_reteach_title'),
     text: t('q4_reteach_text'),
@@ -450,5 +417,59 @@ function getKeyIdea(question, t) {
   if (question.level === 2) return t('teaching_l2')
   if (question.level === 3) return t('teaching_l3')
   return t('teaching_l4')
+}
+
+// 从题目的代码中提取可能的变量名（用于高亮）
+function extractVarNamesFromQuestion(question) {
+  const names = new Set()
+  if (question && typeof question.code === 'string') {
+    const code = question.code
+    const re = /\b[A-Za-z_][A-Za-z0-9_]*\b/g
+    let m
+    while ((m = re.exec(code)) !== null) {
+      const name = m[0]
+      // 排除明显的关键字（大小写都排除）
+      if (/^(FOR|EACH|IN|IF|ELSE|MOD|TRUE|FALSE)$/i.test(name)) continue
+      names.add(name)
+    }
+  }
+  return Array.from(names)
+}
+
+// 在文本中高亮变量名
+function renderHighlightedText(text, varNames) {
+  if (!text) return ''
+  const cleanVarNames = (varNames || []).filter(
+    (v) => typeof v === 'string' && v.length > 0 && v.length <= 20
+  )
+  if (!cleanVarNames.length) return text
+
+  const escaped = cleanVarNames
+    .map((v) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|')
+  const regex = new RegExp(`\\b(${escaped})\\b`, 'g')
+
+  const parts = []
+  let lastIndex = 0
+  let match
+  let key = 0
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index))
+    }
+    parts.push(
+      <span className="teach-var-highlight" key={`var-${key++}`}>
+        {match[0]}
+      </span>
+    )
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+
+  return parts
 }
 

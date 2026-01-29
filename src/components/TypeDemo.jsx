@@ -155,9 +155,57 @@ export default function TypeDemo({ onComplete, isCollapsed = false, isMinimized 
           <div className="type-demo__step-title">
             {isTreeStep ? t('typeTreeTitle') : currentStepData.title}
           </div>
-          <div className="type-demo__step-desc">
-            {isTreeStep ? t('typeTreeDesc') : currentStepData.description}
-          </div>
+          {isTreeStep ? (
+            <div className="type-demo__overview">
+              <div className="type-demo__overview-lead">
+                {t('typeTreeDesc')}
+              </div>
+              <div className="type-demo__overview-grid">
+                <div className="type-demo__overview-item type-demo__overview-item--int">
+                  <div className="type-demo__overview-top">
+                    <span className="type-demo__overview-dot" />
+                    <span className="type-demo__overview-type">int</span>
+                    <span className="type-demo__overview-bytes">4 bytes</span>
+                  </div>
+                  <div className="type-demo__overview-sub">整数，例如 42</div>
+                </div>
+
+                <div className="type-demo__overview-item type-demo__overview-item--double">
+                  <div className="type-demo__overview-top">
+                    <span className="type-demo__overview-dot" />
+                    <span className="type-demo__overview-type">double</span>
+                    <span className="type-demo__overview-bytes">8 bytes</span>
+                  </div>
+                  <div className="type-demo__overview-sub">小数，例如 3.14</div>
+                </div>
+
+                <div className="type-demo__overview-item type-demo__overview-item--string">
+                  <div className="type-demo__overview-top">
+                    <span className="type-demo__overview-dot" />
+                    <span className="type-demo__overview-type">String</span>
+                    <span className="type-demo__overview-bytes">n bytes</span>
+                  </div>
+                  <div className="type-demo__overview-sub">文本，例如 "hello"（长度决定空间）</div>
+                </div>
+
+                <div className="type-demo__overview-item type-demo__overview-item--boolean">
+                  <div className="type-demo__overview-top">
+                    <span className="type-demo__overview-dot" />
+                    <span className="type-demo__overview-type">boolean</span>
+                    <span className="type-demo__overview-bytes">1 byte</span>
+                  </div>
+                  <div className="type-demo__overview-sub">只存 true / false（判断结果）</div>
+                </div>
+              </div>
+              <div className="type-demo__overview-foot">
+                小结：类型告诉我们“盒子能装什么”，以及“通常需要多大的空间”。
+              </div>
+            </div>
+          ) : (
+            <div className="type-demo__step-desc">
+              {currentStepData.description}
+            </div>
+          )}
         </div>
 
         <div className="type-demo__progress">
